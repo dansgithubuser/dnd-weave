@@ -9,6 +9,7 @@
         v-model='plaintext'
       >
       <input type='submit'>
+      <input type='button' value='Random' @click='random'>
     </form>
     <textarea rows=20 cols=80 v-model='english'></textarea>
   </div>
@@ -26,6 +27,10 @@ var app = new Vue({
       const response = await fetch(url);
       const j = await response.json();
       this.english = j.english.join('\n');
+    },
+    async random () {
+      this.plaintext = Array.from({ length: 20 }, i => Math.floor(Math.random() * 256)).join(' ');
+      await this.submit();
     },
   },
 });
