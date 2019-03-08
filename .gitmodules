@@ -1,3 +1,6 @@
 [submodule "deps/djangogo"]
 	path = deps/djangogo
 	url = https://github.com/dansgithubuser/djangogo
+[submodule "deps/dnd"]
+	path = deps/dnd
+	url = https://github.com/dansgithubuser/dnd
