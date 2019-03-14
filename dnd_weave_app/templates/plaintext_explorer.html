@@ -1,38 +1,8 @@
 {% extends 'base.html' %}
 
+{% load render_bundle from webpack_loader %}
+
 {% block content %}
-  <div id='app'>
-    <form @submit.prevent='submit'>
-      <input
-        type='text'
-        size=80
-        v-model='plaintext'
-      >
-      <input type='submit'>
-      <input type='button' value='Random' @click='random'>
-    </form>
-    <textarea rows=20 cols=80 v-model='english'></textarea>
-  </div>
-  <script>
-var app = new Vue({
-  el: '#app',
-  delimiters: ['v{', '}v'],
-  data: {
-    english: '',
-    plaintext: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
-  },
-  methods: {
-    async submit () {
-      const url = `${window.location.protocol}//${window.location.host}/plaintext_to_english?plaintext=${this.plaintext}`;
-      const response = await fetch(url);
-      const j = await response.json();
-      this.english = j.english.join('\n');
-    },
-    async random () {
-      this.plaintext = Array.from({ length: 20 }, i => Math.floor(Math.random() * 256)).join(' ');
-      await this.submit();
-    },
-  },
-});
-  </script>
+  <div id='app'></div>
+  {% render_bundle 'app' %}
 {% endblock %}
