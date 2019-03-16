@@ -5,5 +5,7 @@ module.exports = {
   chainWebpack: config => {
     config.plugin('BundleTracker')
       .use(BundleTracker)
+    config.entryPoints.delete('app');
+    config.entry('plaintext_explorer').add('./src/plaintext_explorer.js');
   },
 };
