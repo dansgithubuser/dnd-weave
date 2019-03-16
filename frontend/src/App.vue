@@ -1,7 +1,6 @@
-<template>
-  <div>
-    dogs
-  </div>
+<template lang='pug'>
+div
+  p dogs
 </template>
 
 <script>
