@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dnd_weave_app.apps.DndWeaveAppConfig',
+    'webpack_loader',
 ]
 
 if os.environ.get('DJANGOGO_ENV', None) == 'local':
@@ -145,3 +146,9 @@ SECURE_HSTS_PRELOAD = True
 if os.environ.get('DJANGOGO_ENV') != 'local':
     import django_heroku
     django_heroku.settings(locals())
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'STATS_FILE': os.path.join('frontend', 'webpack-stats.json')
+    }
+}
