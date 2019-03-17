@@ -6,6 +6,6 @@ module.exports = {
     config.plugin('BundleTracker')
       .use(BundleTracker)
     config.entryPoints.delete('app');
-    config.entry('plaintext_explorer').add('./src/plaintext_explorer.js');
+    config.entry('plaintext_explorer').add('./frontend/plaintext_explorer.js');
   },
 };

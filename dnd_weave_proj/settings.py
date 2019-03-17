@@ -146,9 +146,3 @@ SECURE_HSTS_PRELOAD = True
 if os.environ.get('DJANGOGO_ENV') != 'local':
     import django_heroku
     django_heroku.settings(locals())
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'STATS_FILE': os.path.join('frontend', 'webpack-stats.json')
-    }
-}
