@@ -19,3 +19,7 @@ def plaintext_to_dict(request):
         if d[k] == math.inf:
             d[k] = 'infinity'
     return JsonResponse(d)
+
+def extras(request):
+    element = request.GET.get('element')
+    return JsonResponse(weave.extras[element] if element else weave.misc, safe=False)
