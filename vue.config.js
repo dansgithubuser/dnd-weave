@@ -2,11 +2,11 @@ const BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   chainWebpack: config => {
-    config.plugin('BundleTracker')
-      .use(BundleTracker)
+    config.plugin('BundleTracker').use(BundleTracker);
     config.entryPoints.delete('app');
     config.entry('plaintext_explorer').add('./frontend/plaintext_explorer.js');
-    config.optimization.delete('splitChunks')
+    config.entry('secretmaker').add('./frontend/secretmaker.js');
+    config.optimization.delete('splitChunks');
   },
 };
 

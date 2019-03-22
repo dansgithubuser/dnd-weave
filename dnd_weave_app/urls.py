@@ -14,6 +14,7 @@ urlpatterns = [
     path('plaintext_explorer', TemplateView.as_view(template_name='plaintext_explorer.html')),
     path('login', auth_views.LoginView.as_view(template_name='login.html')),
     path('', TemplateView.as_view(template_name='home.html')),
+    path('secretmaker', TemplateView.as_view(template_name='secretmaker.html')),
 ]
 for name, value in inspect.getmembers(views, isview):
     route = name

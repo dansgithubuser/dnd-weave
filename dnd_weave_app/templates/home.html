@@ -2,6 +2,9 @@
 
 {% block content %}
   <a href='plaintext_explorer'>Plaintext explorer</a><br>
+  {% if request.user.is_authenticated %}
+    <a href='secretmaker'>Secretmaker</a><br>
+  {% endif %}
   <br>
   <a href='signup'>Signup</a><br>
   <a href='login'>Login</a><br>
