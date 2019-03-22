@@ -1,8 +1,1 @@
-{% extends 'base.html' %}
-
-{% load render_bundle from webpack_loader %}
-
-{% block content %}
-  <div id='plaintext_explorer'></div>
-  {% render_bundle 'plaintext_explorer' %}
-{% endblock %}
+{% include 'base-vue.html' with entry='plaintext_explorer' %}
