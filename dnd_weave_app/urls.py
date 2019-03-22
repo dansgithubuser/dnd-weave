@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 
 import inspect
 
@@ -10,7 +11,9 @@ def isview(member):
     return True
 
 urlpatterns = [
+    path('plaintext_explorer', TemplateView.as_view(template_name='plaintext_explorer.html')),
     path('login', auth_views.LoginView.as_view(template_name='login.html')),
+    path('', TemplateView.as_view(template_name='home.html')),
 ]
 for name, value in inspect.getmembers(views, isview):
     route = name
@@ -22,4 +25,7 @@ for name, value in inspect.getmembers(views, isview):
 
 print('serving the following...')
 for i in urlpatterns:
-    print('{}: /{}'.format(i.lookup_str, i.pattern))
+    view = i.lookup_str
+    if view.endswith('TemplateView'):
+        view += '({})'.format(i.callback.view_initkwargs['template_name'])
+    print('{}: /{}'.format(view, i.pattern))

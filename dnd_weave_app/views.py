@@ -12,9 +12,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'deps', 'dnd', 'dn
 
 import weave
 
-def plaintext_explorer(request):
-    return render(request, 'plaintext_explorer.html')
-
 def plaintext_to_dict(request):
     plaintext = [int(i) for i in request.GET['plaintext'].split()]
     d = weave.plaintext_to_dict(plaintext)
@@ -41,11 +38,3 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
-
-def home(request):
-    '''{'route': ''}'''
-    if request.user.is_authenticated:
-        template = 'home.html'
-    else:
-        template = 'home-guest.html'
-    return render(request, template)
