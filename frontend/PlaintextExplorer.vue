@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
-  h1 plaintext explorer
-  h2 controls
+  h1 Plaintext explorer
+  h2 Controls
   form(@submit.prevent='submit')
     input(
       type='text'
@@ -39,11 +39,11 @@ div
           @input=`submit(${i})`
         )
         = v
-  h2 spell
+  h2 Spell
   ul(v-html='english')
-  h2 extra (elemental)
+  h2 Extra (elemental)
   ul(v-html='extra')
-  h2 extra (generic)
+  h2 Extra (generic)
   ul(v-html='misc')
 </template>
 
@@ -118,7 +118,7 @@ export default {
         else a = [`${i[0]}: <span style='${style}'>&nbsp; ${i[1]} &nbsp;</span>`];
         return a.map((i) => `<li>${i}</li>`).join('');
       }).join('');
-      axios.get(`/extras?element=${response.data['element']}`).then((r) => 
+      axios.get(`/plaintext_extras?element=${response.data['element']}`).then((r) =>
         this.extra = r.data.map((v, i) =>
           `<li>${i * 4}: ${v[0]}</li>`
         ).join('')
@@ -131,7 +131,7 @@ export default {
   },
   mounted: async function () {
     this.submit();
-    axios.get('/extras').then((r) =>
+    axios.get('/plaintext_extras').then((r) =>
       this.misc = r.data.map((v, i) =>
         `<li>${Math.floor(i * 4 / 3) + 1}: ${v[0]}</li>`
       ).join('')
