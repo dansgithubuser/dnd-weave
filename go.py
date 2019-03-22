@@ -13,9 +13,9 @@ args = parser.parse_args()
 if args.run_frontend:
     djangogo.invoke('npm', 'run', 'serve')
 else: djangogo.main(args,
-    project = 'dnd_weave_proj',
-    app = 'dnd_weave_app',
-    database = 'dnd_weave_database',
-    user = 'dnd_weave_user',
-    heroku_url = 'https://dnd-weave.herokuapp.com/',
+    project='dnd_weave_proj',
+    app='dnd_weave_app',
+    db_name='dnd_weave_database',
+    db_user='dnd_weave_user',
+    heroku_url='https://dnd-weave.herokuapp.com/',
 )
