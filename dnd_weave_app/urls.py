@@ -26,7 +26,10 @@ for name, value in inspect.getmembers(views, isview):
 
 print('serving the following...')
 for i in urlpatterns:
-    view = i.lookup_str
-    if view.endswith('TemplateView'):
-        view += '({})'.format(i.callback.view_initkwargs['template_name'])
-    print('{}: /{}'.format(view, i.pattern))
+    if hasattr(i, 'lookup_str'):
+        view = i.lookup_str
+        if view.endswith('TemplateView'):
+            view += '({})'.format(i.callback.view_initkwargs['template_name'])
+    else:
+        view = '{}: {}'.format(type(i), i.__dict__)
+    print('\t{}: /{}'.format(view, i.pattern))
