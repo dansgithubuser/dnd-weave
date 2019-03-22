@@ -72,34 +72,50 @@ export default {
       }
       const response = await axios.get(`/plaintext_to_dict?plaintext=${this.plaintext}`);
       this.english = Object.entries(response.data).map((i) => {
+        //spell feature styling
         var style = '';
         if (i[0] === 'element') {
-          const [color, shadowColor] = {
-            'force': ['lightgrey', 'purple'],
-            'antiforce': ['lightgrey', 'purple'],
-            'fire': ['red', 'red'],
-            'cold': ['blue', 'blue'],
-            'lightning': ['lightblue', 'black'],
-            'antilightning': ['lightblue', 'black'],
-            'light': ['yellow', 'black'],
-            'dark': ['black', 'yellow'],
-            'thunder': ['grey', 'grey'],
-            'antithunder': ['grey', 'grey'],
-            'healing': ['#00ff00', 'black'],
-            'necrotic': ['#000000', 'black'],
-            'acid': ['#888000', '#888000'],
-            'poison': ['purple', 'purple'],
-            'psychic': ['pink', 'black'],
-            'radiant': ['orange', 'black'],
-            'wind': ['white', 'blue'],
-            'water': ['cyan', 'blue'],
-            'earth': ['brown', 'brown'],
+          const colors = {
+            'force': ['lightblue', 'purple', 'black', 'white'],
+            'antiforce': ['lightblue', 'purple', 'white', 'black'],
+            'fire': ['orange', 'red', 'black', 'white'],
+            'cold': ['#8080ff', 'blue', 'white', 'black'],
+            'lightning': ['lightblue', 'black', 'black', 'white'],
+            'antilightning': ['lightblue', 'black', 'white', 'black'],
+            'light': ['yellow', 'black', 'black', 'white'],
+            'dark': ['black', 'yellow', 'white', 'black'],
+            'thunder': ['white', 'black', 'black', 'white'],
+            'antithunder': ['white', 'black', 'white', 'black'],
+            'healing': ['#00ff00', 'black', 'black', 'white'],
+            'necrotic': ['black', 'darkred', 'white', 'black'],
+            'acid': ['#ccc000', '#202000', '#202000', 'white'],
+            'poison': ['#cc00cc', '#200020', '#200020', 'white'],
+            'psychic': ['pink', 'black', 'black', 'white'],
+            'radiant': ['orange', 'black', 'black', 'white'],
+            'wind': ['white', 'blue', 'blue', 'white'],
+            'water': ['cyan', 'blue', 'blue', 'white'],
+            'earth': ['#00ff00', '#402000', '#402000', 'white'],
           }[i[1]] || 'lightgrey';
-          style = `color:${color}; font-weight:bold; text-shadow: 0px 0px 2px ${shadowColor}`;
+          style = `
+            color: ${colors[0]};
+            font-weight: bold;
+            text-shadow: 1px 1px 3px ${colors[1]};
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background-image: linear-gradient(to bottom right, ${colors[2]}, ${colors[3]});
+          `;
         }
+        else if (i[0] === 'range' && i[1] === 'infinity'
+          || i[0] === 'shape' && i[1].startsWith('inf')
+        ) style = 'text-transform: uppercase; font-weight: bold;';
+        else if (i[0] === 'duration') {
+          if (i[1].includes('hours')) style = 'text-transform: uppercase;';
+          else if (i[1].includes('days')) style = 'text-transform: uppercase; font-weight: bold;';
+        }
+        //spell feature formatting
         var a;
         if (i[0] === 'extra') a = i[1];
-        else a = [`${i[0]}: <span style='${style}'>${i[1]}</b>`];
+        else a = [`${i[0]}: <span style='${style}'>&nbsp; ${i[1]} &nbsp;</span>`];
         return a.map((i) => `<li>${i}</li>`).join('');
       }).join('');
       axios.get(`/extras?element=${response.data['element']}`).then((r) => 
