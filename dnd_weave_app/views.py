@@ -8,8 +8,6 @@ import math
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'deps', 'dnd', 'dnd'))
-
 import weave
 
 def plaintext_to_dict(request):

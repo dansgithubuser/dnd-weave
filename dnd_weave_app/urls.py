@@ -1,5 +1,7 @@
-from django.urls import path
+from . import resource
 from . import views
+
+from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
@@ -16,6 +18,8 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html')),
     path('secretmaker', TemplateView.as_view(template_name='secretmaker.html')),
 ]
+resource.add(urlpatterns, 'secret', user_id_field='keeper_id')
+
 for name, value in inspect.getmembers(views, isview):
     route = name
     doc = inspect.getdoc(value)
