@@ -9,6 +9,7 @@ class SecretManager(models.Manager):
         return models.Manager.create(self, **kwargs)
 
 class Secret(models.Model):
+    name = models.TextField(null=True)
     keeper = models.ForeignKey(User, models.CASCADE)
     serialized = models.TextField()
 

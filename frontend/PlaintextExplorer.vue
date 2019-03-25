@@ -7,7 +7,7 @@ div
       type='text'
       size=65
       v-model='plaintext'
-      @input='submit("plaintext")'
+      @input='submit'
     )
     input(type='button' value='Random' @click='random')
   div
@@ -35,8 +35,8 @@ div
           type='number'
           min=0
           max=256
-          v-model=`features[${i}]`
-          @input=`submit(${i})`
+          v-model=`plaintext[${i}]`
+          @input=`submit`
         )
         = v
   h2 Spell
@@ -55,21 +55,13 @@ export default {
   data: function () {
     return {
       english: '',
-      plaintext: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0',
-      features: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      plaintext: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       extra: '',
       misc: '',
     };
   },
   methods: {
-    async submit (feature) {
-      if (feature != 'plaintext') {
-        this.plaintext = this.features.join(' ');
-      } else {
-        this.plaintext.split(' ').forEach((v, i) => {
-          this.features[i] = v;
-        });
-      }
+    async submit () {
       const response = await axios.get(`/plaintext_to_dict?plaintext=${this.plaintext}`);
       this.english = Object.entries(response.data).map((i) => {
         //spell feature styling
@@ -125,7 +117,7 @@ export default {
       );
     },
     async random () {
-      this.plaintext = Array.from({ length: 16 }, i => Math.floor(Math.random() * 256)).join(' ');
+      this.plaintext = Array.from({ length: 16 }, i => Math.floor(Math.random() * 256));
       await this.submit('plaintext');
     },
   },

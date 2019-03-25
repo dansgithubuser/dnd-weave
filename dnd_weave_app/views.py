@@ -11,7 +11,7 @@ import sys
 import weave
 
 def plaintext_to_dict(request):
-    plaintext = [int(i) for i in request.GET['plaintext'].split()]
+    plaintext = [int(i) for i in request.GET['plaintext'].split(',')]
     d = weave.plaintext_to_dict(plaintext)
     for k in d.keys():
         if d[k] == math.inf:
