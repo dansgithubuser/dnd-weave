@@ -10,6 +10,8 @@ import sys
 
 import weave
 
+from . import models
+
 def plaintext_to_dict(request):
     plaintext = [int(i) for i in request.GET['plaintext'].split(',')]
     d = weave.plaintext_to_dict(plaintext)
@@ -36,3 +38,17 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'signup.html', {'form': form})
+
+def ciphertext_to_runes(request):
+    ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
+    secret = weave.Secret()
+    secret.deserialize(models.Secret.objects.get(id=request.GET['secret_id']).serialized)
+    runes = weave.ciphertext_to_runes(ciphertext, secret)
+    return JsonResponse(runes, safe=False)
+
+def ciphertext_to_plaintext(request):
+    ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
+    secret = weave.Secret()
+    secret.deserialize(models.Secret.objects.get(id=request.GET['secret_id']).serialized)
+    plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
+    return JsonResponse(plaintext, safe=False)
