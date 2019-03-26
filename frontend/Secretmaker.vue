@@ -50,7 +50,7 @@ export default {
       axios_config: {},
       ciphertext_size: 1,
       ciphertext: [0],
-      runes: [0],
+      runes: [],
     };
   },
   methods: {
@@ -89,6 +89,7 @@ export default {
       this.secret.id = data.id;
       this.secret.name = data.name || this.secret.id;
       this.get_runes();
+      this.get_plaintext();
     },
     get_runes: async function () {
       const res = await axios.get('/ciphertext_to_runes', {
@@ -99,10 +100,7 @@ export default {
       });
       this.runes = res.data;
     },
-  },
-  watch: {
-    ciphertext: async function () {
-      await this.get_runes();
+    get_plaintext: async function () {
       const res = await axios.get('/ciphertext_to_plaintext', {
         params: {
           ciphertext: this.ciphertext.join(','),
@@ -110,6 +108,12 @@ export default {
         },
       });
       this.$refs.plaintext_explorer.plaintext = res.data;
+    },
+  },
+  watch: {
+    ciphertext: function () {
+      this.get_runes();
+      this.get_plaintext();
     },
     ciphertext_size: function () {
       this.ciphertext = this.ciphertext.slice(0, this.ciphertext_size);
