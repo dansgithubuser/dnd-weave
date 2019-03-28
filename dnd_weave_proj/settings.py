@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dnd_weave_app.apps.DndWeaveAppConfig',
     'webpack_loader',
+    'rest_framework',
 ]
 
 if os.environ.get('DJANGOGO_ENV', None) == 'local':

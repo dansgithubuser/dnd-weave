@@ -1,7 +1,7 @@
+import weave
+
 from django.db import models
 from django.contrib.auth.models import User
-
-import weave
 
 class SecretManager(models.Manager):
     def create(self, **kwargs):
@@ -15,10 +15,16 @@ class Secret(models.Model):
 
     objects = SecretManager()
 
+    def perform_create(self, serializer):
+        serializer.save(keeper=self.request.user)
+
 class Character(models.Model):
     name = models.TextField()
     player = models.ForeignKey(User, models.CASCADE)
     secret = models.ForeignKey(Secret, models.PROTECT, null=True)
+
+    def perform_create(self, serializer):
+        serializer.save(player=self.request.user)
 
 class Spell(models.Model):
     character = models.ForeignKey(Character, models.CASCADE)

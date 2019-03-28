@@ -55,21 +55,21 @@ export default {
   },
   methods: {
     create: async function () {
-      const res = await axios.post('/secret', {}, this.axios_config);
+      const res = await axios.post('/resource/Secret', {}, this.axios_config);
       this.load(res.data);
       this.retrieve();
     },
     retrieve: function () {
-      axios.get('/secret').then(r => { this.secret_ids = r.data });
+      axios.get('/resource/Secret').then(r => { this.secret_ids = r.data });
     },
     retrieveOne: async function (id) {
-      const res = await axios.get(`/secret/${id}`);
+      const res = await axios.get(`/resource/Secret/${id}`);
       this.load(res.data);
     },
     update: async function () {
       this.secret.coarse = this.secret.vue_coarse.map(i => i.value);
       await axios.patch(
-        `/secret/${this.secret.id}`,
+        `/resource/Secret/${this.secret.id}`,
         {
           name: this.secret.name,
           serialized: JSON.stringify(this.secret),
@@ -79,7 +79,7 @@ export default {
       this.retrieve();
     },
     del: async function () {
-      await axios.delete(`/secret/${this.secret.id}`, this.axios_config);
+      await axios.delete(`/resource/Secret/${this.secret.id}`, this.axios_config);
       this.retrieve();
     },
     load: function (data) {
