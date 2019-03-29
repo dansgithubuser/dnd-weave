@@ -7,7 +7,7 @@ class Secret(models.Model):
     serialized = models.TextField()
 
 class Character(models.Model):
-    name = models.TextField()
+    name = models.TextField(null=True)
     player = models.ForeignKey(User, models.CASCADE)
     secret = models.ForeignKey(Secret, models.PROTECT, null=True)
 
