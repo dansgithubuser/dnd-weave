@@ -7,15 +7,19 @@ div
     h3 Coarse
     ol
       li(v-for='i in secret.vue_coarse')
-        input(type='text' v-model='i.value', size=65)
+        input(type='text' v-model='i.value' size=65)
     h3 Generation
-    input(type='text' v-model='secret.generation', size=65)
+    input(type='text' v-model='secret.generation' size=65)
     h3 Subproblems
     input(type='text' v-model='secret.subproblems')
     h3 Manage
     input(type='button' value='Save' @click='update')
     input(type='button' value='Delete' @click='del')
     input(type='button' value='New' @click='create')
+    br
+    input(type='text' placeholder='player' v-model='player')
+    input(type='text' placeholder='character' v-model='character')
+    input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
     h2 Controls
     input(type='number' min=1 v-model.number='ciphertext_size')
     | number of runes
@@ -51,6 +55,9 @@ export default {
       ciphertext_size: 1,
       ciphertext: [0],
       runes: [],
+      player: '',
+      character: '',
+      offerStyle: '',
     };
   },
   methods: {
@@ -108,6 +115,15 @@ export default {
         },
       });
       this.$refs.plaintext_explorer.plaintext = res.data;
+    },
+    offer: function () {
+      axios.post('/offer', {
+        secret_id: this.secret.id,
+        player: this.player,
+        character_name: this.character,
+      }, this.axios_config)
+        .then(() => { this.offerStyle = ''; })
+        .catch(() => { this.offerStyle = 'background-color:red'; });
     },
   },
   watch: {

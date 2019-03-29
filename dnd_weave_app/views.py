@@ -6,13 +6,16 @@ import weave
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 import math
+import json
 
 def plaintext_to_dict(request):
     plaintext = [int(i) for i in request.GET['plaintext'].split(',')]
@@ -73,3 +76,16 @@ class SecretViewSet(viewsets.ModelViewSet):
         secrets = models.Secret.objects.filter(keeper_id=request.user.id)
         serializer = self.get_serializer(secrets, many=True)
         return Response(serializer.data)
+
+def offer(request):
+    post = json.loads(request.body)
+    player = User.objects.get(username=post['player'])
+    character = models.Character.objects.get(
+        Q(player=player),
+        Q(name=post['character_name']) | Q(id=post['character_name']),
+    )
+    models.Offer.objects.create(
+        secret_id=post['secret_id'],
+        character=character,
+    )
+    return HttpResponse(status=201)
