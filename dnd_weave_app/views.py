@@ -90,6 +90,15 @@ def offer(request):
     )
     return HttpResponse(status=201)
 
+def accept(request):
+    post = json.loads(request.body)
+    offer = models.Offer.objects.get(id=post['offer_id'])
+    models.Character.objects.filter(
+        id=post['character_id'],
+        player=request.user,
+    ).update(secret_id=offer.secret_id)
+    return HttpResponse(status=204)
+
 class CharacterPermission(permissions.BasePermission):
     def has_permission(self, request, view, character):
         return character.player == request.user
@@ -105,3 +114,16 @@ class CharacterViewSet(viewsets.ModelViewSet):
         characters = models.Character.objects.filter(player_id=request.user.id)
         serializer = self.get_serializer(characters, many=True)
         return Response(serializer.data)
+
+    def retrieve(self, request, pk):
+        character = models.Character.objects.get(id=pk)
+        data = self.get_serializer(character).data
+        offers = models.Offer.objects.filter(character=character).values('id', 'secret__id', 'secret__name')
+        data['offers'] = [{
+            'id': i['id'],
+            'secret': {
+                'id': i['secret__id'],
+                'name': i['secret__name'],
+            },
+        } for i in offers]
+        return Response(data)

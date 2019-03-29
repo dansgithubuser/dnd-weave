@@ -15,4 +15,4 @@ class CharacterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Character
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'secret_id')
