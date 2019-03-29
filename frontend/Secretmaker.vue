@@ -19,12 +19,10 @@ div
       input(type='text' placeholder='player' v-model='player')
       input(type='text' placeholder='character' v-model='character')
       input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
-    h2 Controls
-    input(type='number' min=1 v-model.number='ciphertext_size')
-    | number of runes
-    div(v-for='(v, i) in ciphertext_size')
-      input(type='number' min=0 max=255 value=0 v-model.number='ciphertext[i]')
-      | {{ runes[i] }}
+    Runes(
+      :secret='secret'
+      @ciphertext='ciphertext=$event'
+    )
     Spell(:plaintext='plaintext')
   h2 Secrets
   ul
@@ -35,6 +33,7 @@ div
 </template>
 
 <script>
+import Runes from './Runes.vue'
 import Spell from './Spell.vue'
 import get_csrf_token from './get_csrf_token.js'
 
@@ -43,6 +42,7 @@ import axios from 'axios'
 export default {
   name: 'secretmaker',
   components: {
+    Runes,
     Spell,
   },
   data: function () {
@@ -50,9 +50,7 @@ export default {
       secrets: [],
       secret: {},
       axios_config: {},
-      ciphertext_size: 1,
-      ciphertext: [0],
-      runes: [],
+      ciphertext: Runes.data().ciphertext,
       player: '',
       character: '',
       offerStyle: '',
@@ -90,17 +88,7 @@ export default {
       this.secret.vue_coarse = this.secret.coarse.map(i => ({ value: i }));
       this.secret.id = data.id;
       this.secret.name = data.name || this.secret.id;
-      this.get_runes();
       this.get_plaintext();
-    },
-    get_runes: async function () {
-      const res = await axios.get('/ciphertext_to_runes', {
-        params: {
-          ciphertext: this.ciphertext.join(','),
-          secret_id: this.secret.id,
-        },
-      });
-      this.runes = res.data;
     },
     get_plaintext: async function () {
       const res = await axios.get('/ciphertext_to_plaintext', {
@@ -123,15 +111,7 @@ export default {
   },
   watch: {
     ciphertext: function () {
-      this.get_runes();
       this.get_plaintext();
-    },
-    ciphertext_size: function () {
-      this.ciphertext = this.ciphertext.slice(0, this.ciphertext_size);
-      this.ciphertext = this.ciphertext.concat(Array.from(
-        { length: this.ciphertext_size - this.ciphertext.length },
-        () => 0,
-      ));
     },
   },
   mounted: function () {

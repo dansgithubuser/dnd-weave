@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   h1 Plaintext explorer
-  h2 Controls
+  h2 Plaintext
   div
     - const features = [
     -   'element',
