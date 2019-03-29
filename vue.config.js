@@ -6,6 +6,7 @@ module.exports = {
     config.entryPoints.delete('app');
     config.entry('plaintext_explorer').add('./frontend/plaintext_explorer.js');
     config.entry('secretmaker').add('./frontend/secretmaker.js');
+    config.entry('character_delver').add('./frontend/character_delver.js');
     config.optimization.delete('splitChunks');
   },
 };
