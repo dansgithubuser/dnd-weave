@@ -55,7 +55,7 @@ export default {
   },
   methods: {
     create: async function () {
-      const res = await axios.post('/resource/Secret', {}, this.axios_config);
+      const res = await axios.post('/resource/Secret/', {}, this.axios_config);
       this.load(res.data);
       this.retrieve();
     },
@@ -69,7 +69,7 @@ export default {
     update: async function () {
       this.secret.coarse = this.secret.vue_coarse.map(i => i.value);
       await axios.patch(
-        `/resource/Secret/${this.secret.id}`,
+        `/resource/Secret/${this.secret.id}/`,
         {
           name: this.secret.name,
           serialized: JSON.stringify(this.secret),

@@ -64,7 +64,10 @@ class SecretViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.SecretSerializer
 
     def perform_create(self, serializer):
-        serializer.save(keeper=self.request.user)
+        serializer.save(
+            keeper=self.request.user,
+            serialized=weave.Secret().serialize(),
+        )
 
     def list(self, request):
         secrets = models.Secret.objects.filter(keeper_id=request.user.id)
