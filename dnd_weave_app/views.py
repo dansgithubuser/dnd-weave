@@ -89,3 +89,19 @@ def offer(request):
         character=character,
     )
     return HttpResponse(status=201)
+
+class CharacterPermission(permissions.BasePermission):
+    def has_permission(self, request, view, character):
+        return character.player == request.user
+
+class CharacterViewSet(viewsets.ModelViewSet):
+    queryset = models.Character.objects.all()
+    serializer_class = serializers.CharacterSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(player=self.request.user)
+
+    def list(self, request):
+        characters = models.Character.objects.filter(player_id=request.user.id)
+        serializer = self.get_serializer(characters, many=True)
+        return Response(serializer.data)
