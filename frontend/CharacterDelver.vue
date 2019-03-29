@@ -9,6 +9,15 @@ div
       ul
         li(v-for='i in character.offers')
           input(type='button' :value='i.secret.name || i.secret.id' @click='accept(i.id)')
+    template(v-if='character.secret_id')
+      h2 Runes
+      input(type='text' v-model='runes')
+      input(type='button' value='Research' @click='research')
+    template(v-if='spells.length')
+      h2 Spells
+      ul
+        li(v-for='i in spells')
+          input(type='button' :value='i.runes' disabled='i.dict ? false : true')
   h2 Characters
   ul
     li(v-for='i in characters')
@@ -32,6 +41,8 @@ export default {
     return {
       characters: [],
       character: {},
+      runes: '',
+      spells: [],
     };
   },
   methods: {
@@ -46,6 +57,7 @@ export default {
     retrieveOne: async function (id) {
       const res = await axios.get(`/resource/Character/${id}`);
       this.load(res.data);
+      this.get_spells();
     },
     load: function (data) {
       this.character = data;
@@ -56,6 +68,17 @@ export default {
         character_id: this.character.id,
         offer_id,
       }, this.axios_config);
+    },
+    research: function () {
+      axios.post('/research', {
+        character_id: this.character.id,
+        runes: this.runes,
+      }, this.axios_config).then(() => this.get_spells());
+    },
+    get_spells: function () {
+      axios.get('/spells', {
+        params: { character_id: this.character.id },
+      }).then(r => this.spells = r.data);
     },
   },
   mounted: function () {

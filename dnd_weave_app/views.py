@@ -135,3 +135,26 @@ class CharacterViewSet(viewsets.ModelViewSet):
             },
         } for i in offers]
         return Response(data)
+
+def research(request):
+    post = json.loads(request.body)
+    character = models.Character.objects.get(id=post['character_id'])
+    if character.player_id != request.user.id:
+        raise Exception("character doesn't belong to user")
+    models.Spell.objects.create(
+        character_id=character.id,
+        runes=post['runes'],
+    )
+    return HttpResponse(status=201)
+
+def spells(request):
+    character = models.Character.objects.get(id=request.GET['character_id'])
+    if character.player != request.user:
+        secret = models.Secret.get(id=character.secret_id)
+        if secret.keeper != request.user:
+            raise Exception("character doesn't belong to and isn't secret-kept by user")
+    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('runes', 'dict')
+    return JsonResponse([
+        {'runes': i['runes'], 'dict': i['dict']}
+        for i in spells
+    ], safe=False)
