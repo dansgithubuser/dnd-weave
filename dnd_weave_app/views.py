@@ -47,14 +47,22 @@ def signup(request):
 def ciphertext_to_runes(request):
     ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
     secret = weave.Secret()
-    secret.deserialize(models.Secret.objects.get(id=request.GET['secret_id']).serialized)
+    serialized = models.Secret.objects.get(
+        id=request.GET['secret_id'],
+        keeper=request.user,
+    ).serialized
+    secret.deserialize(serialized)
     runes = weave.ciphertext_to_runes(ciphertext, secret)
     return JsonResponse(runes, safe=False)
 
 def ciphertext_to_plaintext(request):
     ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
     secret = weave.Secret()
-    secret.deserialize(models.Secret.objects.get(id=request.GET['secret_id']).serialized)
+    serialized = models.Secret.objects.get(
+        id=request.GET['secret_id'],
+        keeper=request.user,
+    ).serialized
+    secret.deserialize(serialized)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
     return JsonResponse(plaintext, safe=False)
 
