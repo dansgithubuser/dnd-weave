@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   h1 Secretmaker
-  template(v-if='this.secret.id')
+  template(v-if='secret.id')
     h3 Name
     input(type='text' v-model='secret.name')
     h3 Coarse
