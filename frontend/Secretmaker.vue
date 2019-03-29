@@ -25,10 +25,7 @@ div
     div(v-for='(v, i) in ciphertext_size')
       input(type='number' min=0 max=255 value=0 v-model.number='ciphertext[i]')
       | {{ runes[i] }}
-    PlaintextExplorer(
-      ref='plaintext_explorer'
-      :hidden="['title', 'controls', 'extra']"
-    )
+    Spell(:plaintext='plaintext')
   h2 Secrets
   ul
     li(v-for='i in secrets')
@@ -38,7 +35,7 @@ div
 </template>
 
 <script>
-import PlaintextExplorer from './PlaintextExplorer.vue'
+import Spell from './Spell.vue'
 import get_csrf_token from './get_csrf_token.js'
 
 import axios from 'axios'
@@ -46,7 +43,7 @@ import axios from 'axios'
 export default {
   name: 'secretmaker',
   components: {
-    PlaintextExplorer,
+    Spell,
   },
   data: function () {
     return {
@@ -59,6 +56,7 @@ export default {
       player: '',
       character: '',
       offerStyle: '',
+      plaintext: Spell.props.plaintext.default,
     };
   },
   methods: {
@@ -111,7 +109,7 @@ export default {
           secret_id: this.secret.id,
         },
       });
-      this.$refs.plaintext_explorer.plaintext = res.data;
+      this.plaintext = res.data;
     },
     offer: function () {
       axios.post('/offer', {
