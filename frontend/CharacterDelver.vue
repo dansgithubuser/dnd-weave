@@ -18,16 +18,12 @@ div
       ul
         li(v-for='i in spells')
           input(type='button' :value='i.runes' disabled='i.dict ? false : true')
-  h2 Characters
-  ul
-    li(v-for='i in characters')
-      input(type='button' :value='i.name || i.id' @click='retrieveOne(i.id)')
-    li
-      input(type='button' value='New' @click='create')
+  CharacterSelector(@character='character=$event; get_spells()')
 </template>
 
 <script>
 import PlaintextExplorer from './PlaintextExplorer.vue'
+import CharacterSelector from './CharacterSelector.vue'
 import get_csrf_token from './get_csrf_token.js'
 
 import axios from 'axios'
@@ -36,33 +32,16 @@ export default {
   name: 'character_delver',
   components: {
     PlaintextExplorer,
+    CharacterSelector,
   },
   data: function () {
     return {
-      characters: [],
-      character: {},
+      character: CharacterSelector.data().character,
       runes: '',
       spells: [],
     };
   },
   methods: {
-    create: async function () {
-      const res = await axios.post('/resource/Character/', {}, this.axios_config);
-      this.load(res.data);
-      this.retrieve();
-    },
-    retrieve: function () {
-      axios.get('/resource/Character').then(r => { this.characters = r.data });
-    },
-    retrieveOne: async function (id) {
-      const res = await axios.get(`/resource/Character/${id}`);
-      this.load(res.data);
-      this.get_spells();
-    },
-    load: function (data) {
-      this.character = data;
-      this.character.name = this.character.name || this.character.id;
-    },
     accept: function (offer_id) {
       axios.post('/accept', {
         character_id: this.character.id,
@@ -82,7 +61,6 @@ export default {
     },
   },
   mounted: function () {
-    this.retrieve();
     this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
   }
 }
