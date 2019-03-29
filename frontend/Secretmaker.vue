@@ -13,13 +13,12 @@ div
     h3 Subproblems
     input(type='text' v-model='secret.subproblems')
     h3 Manage
-    input(type='button' value='Save' @click='update')
-    input(type='button' value='Delete' @click='del')
-    input(type='button' value='New' @click='create')
-    br
-    input(type='text' placeholder='player' v-model='player')
-    input(type='text' placeholder='character' v-model='character')
-    input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
+    div
+      input(type='button' value='Save' @click='update')
+    div
+      input(type='text' placeholder='player' v-model='player')
+      input(type='text' placeholder='character' v-model='character')
+      input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
     h2 Controls
     input(type='number' min=1 v-model.number='ciphertext_size')
     | number of runes
@@ -33,7 +32,9 @@ div
   h2 Secrets
   ul
     li(v-for='i in secret_ids')
-      button(@click='retrieveOne(i.id)') {{ i.name || i.id }}
+      input(type='button' :value='i.name || i.id' @click='retrieveOne(i.id)')
+    li
+      input(type='button' value='New' @click='create')
 </template>
 
 <script>
@@ -83,10 +84,6 @@ export default {
         },
         this.axios_config,
       );
-      this.retrieve();
-    },
-    del: async function () {
-      await axios.delete(`/resource/Secret/${this.secret.id}`, this.axios_config);
       this.retrieve();
     },
     load: function (data) {
