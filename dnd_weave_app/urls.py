@@ -14,6 +14,7 @@ urlpatterns = [
     path('login', auth_views.LoginView.as_view(template_name='login.html')),
     path('', TemplateView.as_view(template_name='home.html')),
     path('secretmaker', TemplateView.as_view(template_name='secretmaker.html')),
+    path('spellgranter', TemplateView.as_view(template_name='spellgranter.html')),
     path('character_delver', TemplateView.as_view(template_name='character_delver.html')),
     path('resource/', include('rest_framework.urls', namespace='rest_framework')),
 ]

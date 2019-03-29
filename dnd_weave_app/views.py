@@ -158,3 +158,18 @@ def spells(request):
         {'runes': i['runes'], 'dict': i['dict']}
         for i in spells
     ], safe=False)
+
+def grant(request):
+    spell = models.Spell.objects.get(request.GET['spell_id'])
+    character = models.Character.objects.filter(id=spell.character_id).values('secret__serialized', 'secret__keeper_id')[0]
+    if request.user.id != character['secret__keeper_id']:
+        raise Exception("user isn't secret keeper for this spell")
+    secret = weave.Secret()
+    secret.deserialize(character['secret__serialized'])
+    ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
+    plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
+    spell.dict = weave.plaintext_to_dict(plaintext)
+    level = request.GET.get('level')
+    if level is not None: spell.dict['level'] = level
+    spell.save()
+    return HttpResponse(status=204)
