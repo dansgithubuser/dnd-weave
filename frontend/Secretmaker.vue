@@ -31,7 +31,7 @@ div
     )
   h2 Secrets
   ul
-    li(v-for='i in secret_ids')
+    li(v-for='i in secrets')
       input(type='button' :value='i.name || i.id' @click='retrieveOne(i.id)')
     li
       input(type='button' value='New' @click='create')
@@ -50,7 +50,7 @@ export default {
   },
   data: function () {
     return {
-      secret_ids: [],
+      secrets: [],
       secret: {},
       axios_config: {},
       ciphertext_size: 1,
@@ -68,7 +68,7 @@ export default {
       this.retrieve();
     },
     retrieve: function () {
-      axios.get('/resource/Secret').then(r => { this.secret_ids = r.data });
+      axios.get('/resource/Secret').then(r => { this.secrets = r.data });
     },
     retrieveOne: async function (id) {
       const res = await axios.get(`/resource/Secret/${id}`);
