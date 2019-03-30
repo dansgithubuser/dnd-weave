@@ -1,5 +1,6 @@
 from . import models
 from . import serializers
+from . import helpers
 
 import weave
 
@@ -15,15 +16,11 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 
-import math
 import json
 
 def plaintext_to_dict(request):
     plaintext = [int(i) for i in request.GET['plaintext'].split(',')]
-    d = weave.plaintext_to_dict(plaintext)
-    for k in d.keys():
-        if d[k] == math.inf:
-            d[k] = 'infinity'
+    d = helpers.plaintext_to_jsonable(plaintext)
     return JsonResponse(d)
 
 def plaintext_extras(request):
@@ -187,7 +184,7 @@ def grant(request):
     secret = weave.Secret().deserialize(character['secret__serialized'])
     ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
-    d = weave.plaintext_to_dict(plaintext)
+    d = helpers.plaintext_to_jsonable(plaintext)
     #custom level
     level = data.get('level')
     if level is not None: d['level'] = int(level)
@@ -203,5 +200,5 @@ def runes_to_dict(request):
     secret = weave.Secret().deserialize(secret.serialized)
     ciphertext = weave.runes_to_ciphertext(request.GET['runes'].split(), secret)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
-    d = weave.plaintext_to_dict(plaintext)
+    d = helpers.plaintext_to_jsonable(plaintext)
     return JsonResponse(d)
