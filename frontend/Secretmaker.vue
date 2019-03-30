@@ -1,39 +1,40 @@
 <template lang='pug'>
 div
   h1 Secretmaker
-  template(v-if='this.secret.id')
+  template(v-if='secret.id')
     h3 Name
     input(type='text' v-model='secret.name')
     h3 Coarse
     ol
       li(v-for='i in secret.vue_coarse')
-        input(type='text' v-model='i.value', size=65)
+        input(type='text' v-model='i.value' size=65)
     h3 Generation
-    input(type='text' v-model='secret.generation', size=65)
+    input(type='text' v-model='secret.generation' size=65)
     h3 Subproblems
     input(type='text' v-model='secret.subproblems')
     h3 Manage
-    input(type='button' value='Save' @click='update')
-    input(type='button' value='Delete' @click='del')
-    input(type='button' value='New' @click='create')
-    h2 Controls
-    input(type='number' min=1 v-model.number='ciphertext_size')
-    | number of runes
-    div(v-for='(v, i) in ciphertext_size')
-      input(type='number' min=0 max=255 value=0 v-model.number='ciphertext[i]')
-      | {{ runes[i] }}
-    PlaintextExplorer(
-      ref='plaintext_explorer'
-      :hidden="['title', 'controls', 'extra']"
+    div
+      input(type='button' value='Save' @click='update')
+    div
+      input(type='text' placeholder='player' v-model='player')
+      input(type='text' placeholder='character' v-model='character')
+      input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
+    Runes(
+      :secret_id='secret.id'
+      @ciphertext='ciphertext=$event'
     )
+    Spell(:plaintext='plaintext')
   h2 Secrets
   ul
-    li(v-for='i in secret_ids')
-      button(@click='retrieveOne(i.id)') {{ i.name || i.id }}
+    li(v-for='i in secrets')
+      input(type='button' :value='i.name || i.id' @click='retrieveOne(i.id)')
+    li
+      input(type='button' value='New' @click='create')
 </template>
 
 <script>
-import PlaintextExplorer from './PlaintextExplorer.vue'
+import Runes from './Runes.vue'
+import Spell from './Spell.vue'
 import get_csrf_token from './get_csrf_token.js'
 
 import axios from 'axios'
@@ -41,16 +42,19 @@ import axios from 'axios'
 export default {
   name: 'secretmaker',
   components: {
-    PlaintextExplorer,
+    Runes,
+    Spell,
   },
   data: function () {
     return {
-      secret_ids: [],
+      secrets: [],
       secret: {},
       axios_config: {},
-      ciphertext_size: 1,
-      ciphertext: [0],
-      runes: [],
+      ciphertext: Runes.data().ciphertext,
+      player: '',
+      character: '',
+      offerStyle: '',
+      plaintext: Spell.props.plaintext.default(),
     };
   },
   methods: {
@@ -60,7 +64,7 @@ export default {
       this.retrieve();
     },
     retrieve: function () {
-      axios.get('/resource/Secret').then(r => { this.secret_ids = r.data });
+      axios.get('/resource/Secret').then(r => { this.secrets = r.data });
     },
     retrieveOne: async function (id) {
       const res = await axios.get(`/resource/Secret/${id}`);
@@ -78,27 +82,13 @@ export default {
       );
       this.retrieve();
     },
-    del: async function () {
-      await axios.delete(`/resource/Secret/${this.secret.id}`, this.axios_config);
-      this.retrieve();
-    },
     load: function (data) {
       const json = JSON.parse(data.serialized);
       this.secret = json;
       this.secret.vue_coarse = this.secret.coarse.map(i => ({ value: i }));
       this.secret.id = data.id;
       this.secret.name = data.name || this.secret.id;
-      this.get_runes();
       this.get_plaintext();
-    },
-    get_runes: async function () {
-      const res = await axios.get('/ciphertext_to_runes', {
-        params: {
-          ciphertext: this.ciphertext.join(','),
-          secret_id: this.secret.id,
-        },
-      });
-      this.runes = res.data;
     },
     get_plaintext: async function () {
       const res = await axios.get('/ciphertext_to_plaintext', {
@@ -107,20 +97,21 @@ export default {
           secret_id: this.secret.id,
         },
       });
-      this.$refs.plaintext_explorer.plaintext = res.data;
+      this.plaintext = res.data;
+    },
+    offer: function () {
+      axios.post('/offer', {
+        secret_id: this.secret.id,
+        player: this.player,
+        character_name: this.character,
+      }, this.axios_config)
+        .then(() => { this.offerStyle = ''; })
+        .catch(() => { this.offerStyle = 'background-color:red'; });
     },
   },
   watch: {
     ciphertext: function () {
-      this.get_runes();
       this.get_plaintext();
-    },
-    ciphertext_size: function () {
-      this.ciphertext = this.ciphertext.slice(0, this.ciphertext_size);
-      this.ciphertext = this.ciphertext.concat(Array.from(
-        { length: this.ciphertext_size - this.ciphertext.length },
-        () => 0,
-      ));
     },
   },
   mounted: function () {

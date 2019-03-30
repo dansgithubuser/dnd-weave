@@ -7,7 +7,7 @@ class Secret(models.Model):
     serialized = models.TextField()
 
 class Character(models.Model):
-    name = models.TextField()
+    name = models.TextField(null=True)
     player = models.ForeignKey(User, models.CASCADE)
     secret = models.ForeignKey(Secret, models.PROTECT, null=True)
 
@@ -16,9 +16,8 @@ class Character(models.Model):
 
 class Spell(models.Model):
     character = models.ForeignKey(Character, models.CASCADE)
-    ciphertext = models.BinaryField()
-    learned = models.BooleanField()
-    level = models.IntegerField()
+    runes = models.TextField(default='')
+    dict = models.TextField(null=True)
 
 class Offer(models.Model):
     secret = models.ForeignKey(Secret, models.CASCADE)

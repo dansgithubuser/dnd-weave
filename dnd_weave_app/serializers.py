@@ -9,3 +9,10 @@ class SecretSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Secret
         fields = ('id', 'name', 'serialized')
+
+class CharacterSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
+
+    class Meta:
+        model = models.Character
+        fields = ('id', 'name', 'secret_id')
