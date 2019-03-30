@@ -47,23 +47,21 @@ def signup(request):
 
 def ciphertext_to_runes(request):
     ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
-    secret = weave.Secret()
     serialized = models.Secret.objects.get(
         id=request.GET['secret_id'],
         keeper=request.user,
     ).serialized
-    secret.deserialize(serialized)
+    secret = weave.Secret().deserialize(serialized)
     runes = weave.ciphertext_to_runes(ciphertext, secret)
     return JsonResponse(runes, safe=False)
 
 def ciphertext_to_plaintext(request):
     ciphertext = [int(i) for i in request.GET['ciphertext'].split(',')]
-    secret = weave.Secret()
     serialized = models.Secret.objects.get(
         id=request.GET['secret_id'],
         keeper=request.user,
     ).serialized
-    secret.deserialize(serialized)
+    secret = weave.Secret().deserialize(serialized)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
     return JsonResponse(plaintext, safe=False)
 
@@ -172,14 +170,21 @@ def grant(request):
         data = json.loads(request.body)
     else:
         data = request.GET
+    #get or create spell
+    spell_id = data.get('spell_id')
+    if spell_id:
+        spell = models.Spell.objects.get(id=spell_id)
+    else:
+        spell = models.Spell(
+            character_id=data['character_id'],
+            runes=data['runes'],
+        )
     #check permission
-    spell = models.Spell.objects.get(id=data['spell_id'])
     character = models.Character.objects.filter(id=spell.character_id).values('secret__serialized', 'secret__keeper_id')[0]
     if request.user.id != character['secret__keeper_id']:
         raise Exception("user isn't secret keeper for this spell")
     #decrypt
-    secret = weave.Secret()
-    secret.deserialize(character['secret__serialized'])
+    secret = weave.Secret().deserialize(character['secret__serialized'])
     ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
     d = weave.plaintext_to_dict(plaintext)
@@ -189,4 +194,14 @@ def grant(request):
     #results
     spell.dict = json.dumps(d)
     if request.method == 'POST': spell.save()
+    return JsonResponse(d)
+
+def runes_to_dict(request):
+    secret = models.Secret.objects.get(id=request.GET['secret_id'])
+    if request.user.id != secret.keeper_id:
+        raise Exception("user isn't keeper of this secret")
+    secret = weave.Secret().deserialize(secret.serialized)
+    ciphertext = weave.runes_to_ciphertext(request.GET['runes'].split(), secret)
+    plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
+    d = weave.plaintext_to_dict(plaintext)
     return JsonResponse(d)

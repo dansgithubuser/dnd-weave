@@ -12,7 +12,7 @@ div
 import axios from 'axios'
 
 export default {
-  props: ['secret'],
+  props: ['secret_id'],
   data: function () {
     return {
       ciphertext_size: 1,
@@ -25,10 +25,11 @@ export default {
       const res = await axios.get('/ciphertext_to_runes', {
         params: {
           ciphertext: this.ciphertext.join(','),
-          secret_id: this.secret.id,
+          secret_id: this.secret_id,
         },
       });
       this.runes = res.data;
+      this.$emit('runes', this.runes);
     },
   },
   watch: {
@@ -43,9 +44,12 @@ export default {
         () => 0,
       ));
     },
-    secret: function () {
+    secret_id: function () {
       this.get_runes();
     }
+  },
+  mounted: function () {
+    this.get_runes();
   },
 }
 </script>

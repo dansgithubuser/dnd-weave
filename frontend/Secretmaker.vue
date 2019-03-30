@@ -20,7 +20,7 @@ div
       input(type='text' placeholder='character' v-model='character')
       input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
     Runes(
-      :secret='secret'
+      :secret_id='secret.id'
       @ciphertext='ciphertext=$event'
     )
     Spell(:plaintext='plaintext')
@@ -54,7 +54,7 @@ export default {
       player: '',
       character: '',
       offerStyle: '',
-      plaintext: Spell.props.plaintext.default,
+      plaintext: Spell.props.plaintext.default(),
     };
   },
   methods: {
