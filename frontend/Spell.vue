@@ -93,7 +93,8 @@ export default {
     },
   },
   mounted: function () {
-    this.submit();
+    if (this.dict.element) this.load(this.dict);
+    else this.submit();
   },
 }
 </script>

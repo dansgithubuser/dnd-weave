@@ -17,13 +17,16 @@ div
       h2 Spells
       ul
         li(v-for='i in spells')
-          input(type='button' :value='i.runes' disabled='i.dict ? false : true')
+          input(type='button' :value='i.runes' :disabled='i.dict ? false : true' @click='spell = i')
+    template(v-if='spell')
+      Spell(:dict='spell.dict')
   CharacterSelector(@character='character=$event; get_spells()')
 </template>
 
 <script>
 import PlaintextExplorer from './PlaintextExplorer.vue'
 import CharacterSelector from './CharacterSelector.vue'
+import Spell from './Spell.vue'
 import get_csrf_token from './get_csrf_token.js'
 
 import axios from 'axios'
@@ -33,12 +36,14 @@ export default {
   components: {
     PlaintextExplorer,
     CharacterSelector,
+    Spell,
   },
   data: function () {
     return {
       character: CharacterSelector.data().character,
       runes: '',
       spells: [],
+      spell: null,
     };
   },
   methods: {
