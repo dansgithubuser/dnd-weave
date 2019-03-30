@@ -20,6 +20,7 @@ div
     input(type='button' value='grant' @click='grant')
   CharacterSelector(
     :retrieveUrl='"resource/Character/secret_kept"'
+    :allowNew='false'
     @character='character=$event; get_spells()'
   )
 </template>

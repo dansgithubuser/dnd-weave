@@ -4,7 +4,7 @@ div
   ul
     li(v-for='i in characters')
       input(type='button' :value='i.name || i.id' @click='retrieveOne(i.id)')
-    li
+    li(v-if='allowNew')
       input(type='button' value='New' @click='create')
 </template>
 
@@ -16,6 +16,7 @@ import axios from 'axios'
 export default {
   props: {
     retrieveUrl: { default: '/resource/Character' },
+    allowNew: { default: true },
   },
   data: function () {
     return {

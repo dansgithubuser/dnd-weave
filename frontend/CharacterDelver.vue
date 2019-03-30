@@ -20,7 +20,10 @@ div
           input(type='button' :value='i.runes' :disabled='i.dict ? false : true' @click='spell = i')
     template(v-if='spell')
       Spell(:dict='spell.dict')
-  CharacterSelector(@character='character=$event; get_spells()')
+  CharacterSelector(
+    :allowNew='false'
+    @character='character=$event; get_spells()'
+  )
 </template>
 
 <script>
