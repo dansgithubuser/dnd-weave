@@ -14,6 +14,9 @@ import get_csrf_token from './get_csrf_token.js'
 import axios from 'axios'
 
 export default {
+  props: {
+    retrieveUrl: { default: '/resource/Character' },
+  },
   data: function () {
     return {
       characters: [],
@@ -27,7 +30,7 @@ export default {
       this.retrieve();
     },
     retrieve: function () {
-      axios.get('/resource/Character').then(r => { this.characters = r.data });
+      axios.get(this.retrieveUrl).then(r => { this.characters = r.data });
     },
     retrieveOne: async function (id) {
       const res = await axios.get(`/resource/Character/${id}`);

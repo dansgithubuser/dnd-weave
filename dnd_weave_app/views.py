@@ -5,6 +5,7 @@ import weave
 
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
@@ -135,6 +136,12 @@ class CharacterViewSet(viewsets.ModelViewSet):
             },
         } for i in offers]
         return Response(data)
+
+    @action(detail=False)
+    def secret_kept(self, request):
+        characters = models.Character.objects.filter(secret__keeper=request.user)
+        serializer = self.get_serializer(characters, many=True)
+        return Response(serializer.data)
 
 def research(request):
     post = json.loads(request.body)
