@@ -77,10 +77,7 @@ export default {
           runes: this.runes.join(' '),
           secret_id: this.character.secret_id,
         },
-      }).then(r => {
-        console.log('asss', typeof r.data, r.data);
-        this.spell = { dict: r.data };
-      });
+      }).then(r => { this.spell = { dict: r.data } });
     },
   },
   mounted: function () {

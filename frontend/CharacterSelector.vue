@@ -37,6 +37,15 @@ export default {
       const res = await axios.get(`/resource/Character/${id}`);
       this.load(res.data);
     },
+    update: function () {
+      axios.patch(
+        `/resource/Character/${this.character.id}/`,
+        {
+          name: this.character.name,
+        },
+        this.axios_config,
+      ).then(() => this.retrieve());
+    },
     load: function (data) {
       this.character = data;
       this.character.name = this.character.name || this.character.id;

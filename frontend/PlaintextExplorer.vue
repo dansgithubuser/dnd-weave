@@ -3,6 +3,8 @@ div
   h1 Plaintext explorer
   h2 Plaintext
   div
+    | {{ plaintext.join(',') }}
+  div
     - const features = [
     -   'element',
     -   'damage dice shape',

@@ -76,18 +76,24 @@ class SecretViewSet(viewsets.ModelViewSet):
             serialized=weave.Secret().serialize(),
         )
 
+    def perform_update(self, serializer):
+        if len(models.Character.objects.filter(secret_id=self.get_object().id)):
+            raise Exception('secret has already been accepted by a character, cannot change it')
+        secret = weave.Secret().deserialize(self.request.data['serialized'])
+        serializer.save(serialized=secret.serialize())
+
     def list(self, request):
-        secrets = models.Secret.objects.filter(keeper_id=request.user.id)
+        secrets = models.Secret.objects.filter(keeper_id=request.user.id).order_by('id')
         serializer = self.get_serializer(secrets, many=True)
         return Response(serializer.data)
 
 def offer(request):
     post = json.loads(request.body)
     player = User.objects.get(username=post['player'])
-    character = models.Character.objects.get(
-        Q(player=player),
-        Q(name=post['character_name']) | Q(id=post['character_name']),
-    )
+    name_or_id = post['character_name']
+    q = Q(name=name_or_id)
+    if name_or_id.isdigit(): q |= Q(id=post['character_name'])
+    character = models.Character.objects.get(Q(player=player), q)
     models.Offer.objects.create(
         secret_id=post['secret_id'],
         character=character,
@@ -115,7 +121,7 @@ class CharacterViewSet(viewsets.ModelViewSet):
         serializer.save(player=self.request.user)
 
     def list(self, request):
-        characters = models.Character.objects.filter(player_id=request.user.id)
+        characters = models.Character.objects.filter(player_id=request.user.id).order_by('id')
         serializer = self.get_serializer(characters, many=True)
         return Response(serializer.data)
 
@@ -155,9 +161,9 @@ def spells(request):
         secret = models.Secret.get(id=character.secret_id)
         if secret.keeper != request.user:
             raise Exception("character doesn't belong to and isn't secret-kept by user")
-    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('id', 'runes', 'dict')
+    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('id', 'runes', 'dict').order_by('id')
     return JsonResponse([
-        {'id': i['id'], 'runes': i['runes'], 'dict': json.loads(i['dict'])}
+        {'id': i['id'], 'runes': i['runes'], 'dict': json.loads(i['dict']) if i['dict'] else ''}
         for i in spells
     ], safe=False)
 

@@ -10,6 +10,7 @@ div
 
 <script>
 import axios from 'axios'
+import helpers from './helpers.js'
 
 export default {
   props: ['secret_id'],
@@ -38,11 +39,7 @@ export default {
       this.$emit('ciphertext', this.ciphertext);
     },
     ciphertext_size: function () {
-      this.ciphertext = this.ciphertext.slice(0, this.ciphertext_size);
-      this.ciphertext = this.ciphertext.concat(Array.from(
-        { length: this.ciphertext_size - this.ciphertext.length },
-        () => 0,
-      ));
+      helpers.arrayResize(this.ciphertext, this.ciphertext_size, () => 0);
     },
     secret_id: function () {
       this.get_runes();

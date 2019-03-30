@@ -9,6 +9,8 @@ div
       ul
         li(v-for='i in character.offers')
           input(type='button' :value='i.secret.name || i.secret.id' @click='accept(i.id)')
+    h3 Manage
+    input(type='button' value='Save' @click='$refs.characterSelector.update')
     template(v-if='character.secret_id')
       h2 Runes
       input(type='text' v-model='runes')
@@ -21,8 +23,8 @@ div
     template(v-if='spell')
       Spell(:dict='spell.dict')
   CharacterSelector(
-    :allowNew='false'
     @character='character=$event; get_spells()'
+    ref='characterSelector'
   )
 </template>
 
@@ -54,7 +56,8 @@ export default {
       axios.post('/accept', {
         character_id: this.character.id,
         offer_id,
-      }, this.axios_config);
+      }, this.axios_config)
+        .then(() => this.$refs.characterSelector.retrieveOne(this.character.id));
     },
     research: function () {
       axios.post('/research', {

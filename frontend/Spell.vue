@@ -108,6 +108,7 @@ export default {
       this.submit();
     },
     dict: function () {
+      if (!this.dict) return;
       this.load(this.dict);
     },
     'ddict.level': function () {
