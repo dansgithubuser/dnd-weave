@@ -7,7 +7,11 @@ div
       li(v-for='i in spells')
         input(type='button' :value='i.runes' @click='inspectSpell(i)')
   template(v-if='spell')
-    Spell(:dict='spell.dict')
+    Spell(
+      :dict='spell.dict'
+      :editableLevel='true'
+      @level='spell.dict.level=$event'
+    )
     input(type='button' value='grant' @click='grant')
   CharacterSelector(
     :retrieveUrl='"resource/Character/secret_kept"'

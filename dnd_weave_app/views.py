@@ -185,7 +185,7 @@ def grant(request):
     d = weave.plaintext_to_dict(plaintext)
     #custom level
     level = data.get('level')
-    if level is not None: d['level'] = level
+    if level is not None: d['level'] = int(level)
     #results
     spell.dict = json.dumps(d)
     if request.method == 'POST': spell.save()
