@@ -53,7 +53,7 @@ export default {
   },
   data: function () {
     return {
-      plaintext: Spell.props.plaintext.default,
+      plaintext: Spell.props.plaintext.default(),
       extra: '',
       misc: '',
     };

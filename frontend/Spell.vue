@@ -10,7 +10,10 @@ import axios from 'axios'
 export default {
   props: {
     plaintext: {
-      default: Array.from({length: 16}, i => 0),
+      default: () => Array.from({length: 16}, i => 0),
+    },
+    dict: {
+      default: () => {},
     },
   },
   data: function () {
@@ -24,7 +27,10 @@ export default {
       const response = await axios.get('/plaintext_to_dict', {
         params: { plaintext: this.plaintext.join(',') },
       });
-      this.english = Object.entries(response.data).map(i => {
+      this.load(response.data);
+    },
+    async load (data) {
+      this.english = Object.entries(data).map(i => {
         //spell feature styling
         var style = '';
         if (i[0] === 'element') {
@@ -71,7 +77,7 @@ export default {
         else a = [`${i[0]}: <span style='${style}'>&nbsp; ${i[1]} &nbsp;</span>`];
         return a.map(i => `<li>${i}</li>`).join('');
       }).join('');
-      axios.get(`/plaintext_extras?element=${response.data['element']}`).then(r =>
+      axios.get(`/plaintext_extras?element=${data['element']}`).then(r =>
         this.$emit('extra', this.extra = r.data.map((v, i) =>
           `<li>${i * 4}: ${v[0]}</li>`
         ).join(''))
@@ -81,6 +87,9 @@ export default {
   watch: {
     plaintext: async function () {
       this.submit();
+    },
+    dict: function () {
+      this.load(this.dict);
     },
   },
   mounted: function () {

@@ -160,23 +160,33 @@ def spells(request):
         secret = models.Secret.get(id=character.secret_id)
         if secret.keeper != request.user:
             raise Exception("character doesn't belong to and isn't secret-kept by user")
-    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('runes', 'dict')
+    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('id', 'runes', 'dict')
     return JsonResponse([
-        {'runes': i['runes'], 'dict': i['dict']}
+        {'id': i['id'], 'runes': i['runes'], 'dict': json.loads(i['dict'])}
         for i in spells
     ], safe=False)
 
 def grant(request):
-    spell = models.Spell.objects.get(request.GET['spell_id'])
+    #homogenize data
+    if request.method == 'POST':
+        data = json.loads(request.body)
+    else:
+        data = request.GET
+    #check permission
+    spell = models.Spell.objects.get(id=data['spell_id'])
     character = models.Character.objects.filter(id=spell.character_id).values('secret__serialized', 'secret__keeper_id')[0]
     if request.user.id != character['secret__keeper_id']:
         raise Exception("user isn't secret keeper for this spell")
+    #decrypt
     secret = weave.Secret()
     secret.deserialize(character['secret__serialized'])
     ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
-    spell.dict = weave.plaintext_to_dict(plaintext)
-    level = request.GET.get('level')
-    if level is not None: spell.dict['level'] = level
-    spell.save()
-    return HttpResponse(status=204)
+    d = weave.plaintext_to_dict(plaintext)
+    #custom level
+    level = data.get('level')
+    if level is not None: d['level'] = level
+    #results
+    spell.dict = json.dumps(d)
+    if request.method == 'POST': spell.save()
+    return JsonResponse(d)
