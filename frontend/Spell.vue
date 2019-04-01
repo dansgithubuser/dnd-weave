@@ -50,7 +50,9 @@ export default {
         }
       }
       this.ddict = dict;
-      this.extra = (await axios.get(`/plaintext_extras?element=${data['element']}`)).data.map(
+      if (data['element']) this.extra = (await axios.get(
+        `/plaintext_extras?element=${data['element']}`
+      )).data.map(
         (v, i) => `<li>${i * 4}: ${v[0]}</li>`,
       ).join('');
       this.$emit('extra', this.extra);

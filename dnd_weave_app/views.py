@@ -188,7 +188,10 @@ def grant(request):
         raise Exception("user isn't secret keeper for this spell")
     #decrypt
     secret = weave.Secret().deserialize(character['secret__serialized'])
-    ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
+    try:
+        ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
+    except:
+        return JsonResponse({'not a spell': 'invalid runes'})
     plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
     d = helpers.plaintext_to_jsonable(plaintext)
     #custom level
