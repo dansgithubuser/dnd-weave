@@ -8,7 +8,7 @@ div
         input(type='button' :value='i.runes' @click='inspectSpell(i)')
   template(v-if='character.secret_id')
     Runes(
-      :secret_id='character.secret_id'
+      :secretId='character.secret_id'
       @runes='runes=$event'
     )
   template(v-if='spell')
@@ -21,7 +21,7 @@ div
   CharacterSelector(
     :retrieveUrl='"resource/Character/secret_kept"'
     :allowNew='false'
-    @character='character=$event; get_spells()'
+    @character='character=$event; getSpells()'
   )
 </template>
 
@@ -29,7 +29,7 @@ div
 import CharacterSelector from './CharacterSelector.vue'
 import Spell from './Spell.vue'
 import Runes from './Runes.vue'
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 
 import axios from 'axios'
 
@@ -49,39 +49,40 @@ export default {
     };
   },
   methods: {
-    get_spells: function () {
-      axios.get('/spells', {
+    async getSpells () {
+      this.spells = (await axios.get('/spells', {
         params: { character_id: this.character.id },
-      }).then(r => this.spells = r.data);
+      })).data;
     },
-    inspectSpell: function (spell) {
+    async inspectSpell (spell) {
       this.spell = spell;
-      if (!this.spell.dict) {
-        axios.get('/grant', { params: { spell_id: this.spell.id } })
-          .then(r => this.spell.dict = r.data);
-      }
+      if (!this.spell.dict)
+        this.spell.dict = (await axios.get('/grant', { params: {
+          spell_id: this.spell.id,
+        } })).data;
     },
-    grant: function () {
-      axios.post('/grant', {
+    async grant () {
+      await axios.post('/grant', {
         spell_id: this.spell.id,
         character_id: this.character.id,
         runes: this.runes.join(' '),
         level: this.spell.dict.level,
-      }, this.axios_config).then(() => this.get_spells());
+      }, this.axiosConfig);
+      this.getSpells();
     },
   },
   watch: {
-    runes: async function () {
-      axios.get('/runes_to_dict', {
+    async runes () {
+      this.spell = { dict: (await axios.get('/runes_to_dict', {
         params: {
           runes: this.runes.join(' '),
           secret_id: this.character.secret_id,
         },
-      }).then(r => { this.spell = { dict: r.data } });
+      })).data };
     },
   },
-  mounted: function () {
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
-  }
+  mounted () {
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
+  },
 }
 </script>

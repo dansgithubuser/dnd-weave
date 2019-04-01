@@ -9,7 +9,7 @@ div
 </template>
 
 <script>
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 
 import axios from 'axios'
 
@@ -18,43 +18,40 @@ export default {
     retrieveUrl: { default: '/resource/Character' },
     allowNew: { default: true },
   },
-  data: function () {
-    return {
-      characters: [],
-      character: {},
-    };
-  },
+  data: () => ({
+    characters: [],
+    character: {},
+  }),
   methods: {
-    create: async function () {
-      const res = await axios.post('/resource/Character/', {}, this.axios_config);
+    async create () {
+      const res = await axios.post('/resource/Character/', {}, this.axiosConfig);
       this.load(res.data);
       this.retrieve();
     },
-    retrieve: function () {
-      axios.get(this.retrieveUrl).then(r => { this.characters = r.data });
+    async retrieve () {
+      this.characters = (await axios.get(this.retrieveUrl)).data;
     },
-    retrieveOne: async function (id) {
+    async retrieveOne (id) {
       const res = await axios.get(`/resource/Character/${id}`);
       this.load(res.data);
     },
-    update: function () {
-      axios.patch(
+    async update () {
+      await axios.patch(
         `/resource/Character/${this.character.id}/`,
-        {
-          name: this.character.name,
-        },
-        this.axios_config,
-      ).then(() => this.retrieve());
+        { name: this.character.name },
+        this.axiosConfig,
+      );
+      this.retrieve();
     },
-    load: function (data) {
+    load (data) {
       this.character = data;
       this.character.name = this.character.name || this.character.id;
       this.$emit('character', this.character);
     },
   },
-  mounted: function () {
+  mounted () {
     this.retrieve();
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
-  }
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
+  },
 }
 </script>

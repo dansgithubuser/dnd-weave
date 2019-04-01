@@ -1,5 +1,5 @@
 export default {
-  arrayResize: function (array, size, construct) {
+  arrayResize (array, size, construct) {
     if (size < array.length) {
       const d = array.length - size;
       array.splice(-d, d);

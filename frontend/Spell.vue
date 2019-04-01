@@ -29,12 +29,10 @@ export default {
       default: false,
     },
   },
-  data: function () {
-    return {
-      ddict: {},
-      extra: '',
-    };
-  },
+  data: () => ({
+    ddict: {},
+    extra: '',
+  }),
   methods: {
     async submit () {
       const response = await axios.get('/plaintext_to_dict', {
@@ -52,13 +50,12 @@ export default {
         }
       }
       this.ddict = dict;
-      axios.get(`/plaintext_extras?element=${data['element']}`).then(r =>
-        this.$emit('extra', this.extra = r.data.map((v, i) =>
-          `<li>${i * 4}: ${v[0]}</li>`
-        ).join(''))
-      );
+      this.extra = (await axios.get(`/plaintext_extras?element=${data['element']}`)).data.map(
+        (v, i) => `<li>${i * 4}: ${v[0]}</li>`,
+      ).join('');
+      this.$emit('extra', this.extra);
     },
-    getStyle: function (feature, value) {
+    getStyle (feature, value) {
       var style = '';
       if (feature  === 'element') {
         const colors = {
@@ -104,14 +101,14 @@ export default {
     },
   },
   watch: {
-    plaintext: async function () {
+    plaintext () {
       this.submit();
     },
-    dict: function () {
+    dict () {
       if (!this.dict) return;
       this.load(this.dict);
     },
-    'ddict.level': function () {
+    'ddict.level' () {
       this.$emit('level', this.ddict.level);
     },
   },

@@ -6,5 +6,5 @@ Vue.config.productionTip = false
 
 new Vue({
   store,
-  render: function (h) { return h(Spellgranter) }
+  render (h) { return h(Spellgranter) },
 }).$mount('#spellgranter')
