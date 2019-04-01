@@ -21,7 +21,7 @@ div
   CharacterSelector(
     :retrieveUrl='"resource/Character/secret_kept"'
     :allowNew='false'
-    @character='character=$event; get_spells()'
+    @character='character=$event; getSpells()'
   )
 </template>
 
@@ -29,7 +29,7 @@ div
 import CharacterSelector from './CharacterSelector.vue'
 import Spell from './Spell.vue'
 import Runes from './Runes.vue'
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 
 import axios from 'axios'
 
@@ -49,7 +49,7 @@ export default {
     };
   },
   methods: {
-    get_spells: function () {
+    getSpells: function () {
       axios.get('/spells', {
         params: { character_id: this.character.id },
       }).then(r => this.spells = r.data);
@@ -67,7 +67,7 @@ export default {
         character_id: this.character.id,
         runes: this.runes.join(' '),
         level: this.spell.dict.level,
-      }, this.axios_config).then(() => this.get_spells());
+      }, this.axiosConfig).then(() => this.getSpells());
     },
   },
   watch: {
@@ -81,7 +81,7 @@ export default {
     },
   },
   mounted: function () {
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }
 </script>

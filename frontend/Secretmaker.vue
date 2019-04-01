@@ -7,12 +7,12 @@ div
     h3 Coarse
     input(type='number' min=1 v-model.number='coarseSize')
     ol
-      li(v-for='i in secret.vue_coarse')
+      li(v-for='i in secret.vueCoarse')
         input(type='text' v-model='i.value' size=65)
     h3 Generation
-    input(type='text' v-model='secret.vue_generation' size=65)
+    input(type='text' v-model='secret.vueGeneration' size=65)
     h3 Subproblems
-    input(type='text' v-model='secret.vue_subproblems')
+    input(type='text' v-model='secret.vueSubproblems')
     h3 Manage
     div
       input(type='button' value='Save' @click='update')
@@ -21,7 +21,7 @@ div
       input(type='text' placeholder='character' v-model='character')
       input(type='button' value='Offer' @click='offer' v-bind:style='offerStyle')
     Runes(
-      :secret_id='secret.id'
+      :secretId='secret.id'
       @ciphertext='ciphertext=$event'
     )
     Spell(:plaintext='plaintext')
@@ -36,7 +36,7 @@ div
 <script>
 import Runes from './Runes.vue'
 import Spell from './Spell.vue'
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 import helpers from './helpers.js'
 
 import axios from 'axios'
@@ -51,7 +51,7 @@ export default {
     return {
       secrets: [],
       secret: {},
-      axios_config: {},
+      axiosConfig: {},
       ciphertext: Runes.data().ciphertext,
       player: '',
       character: '',
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     create: async function () {
-      const res = await axios.post('/resource/Secret/', {}, this.axios_config);
+      const res = await axios.post('/resource/Secret/', {}, this.axiosConfig);
       this.load(res.data);
       this.retrieve();
     },
@@ -74,31 +74,31 @@ export default {
       this.load(res.data);
     },
     update: async function () {
-      this.secret.coarse = this.secret.vue_coarse.map(i => i.value.split(',').map(i => parseInt(i)));
-      this.secret.generation = this.secret.vue_generation.split(',').map(i => parseInt(i));
-      this.secret.subproblems = this.secret.vue_subproblems.split(',').map(i => parseInt(i));
+      this.secret.coarse = this.secret.vueCoarse.map(i => i.value.split(',').map(i => parseInt(i)));
+      this.secret.generation = this.secret.vueGeneration.split(',').map(i => parseInt(i));
+      this.secret.subproblems = this.secret.vueSubproblems.split(',').map(i => parseInt(i));
       await axios.patch(
         `/resource/Secret/${this.secret.id}/`,
         {
           name: this.secret.name,
           serialized: JSON.stringify(this.secret),
         },
-        this.axios_config,
+        this.axiosConfig,
       );
       this.retrieve();
     },
     load: function (data) {
       const json = JSON.parse(data.serialized);
       this.secret = json;
-      this.secret.vue_coarse = this.secret.coarse.map(i => ({ value: i.join(',') }));
-      this.secret.vue_generation = this.secret.generation.join(',');
-      this.secret.vue_subproblems = this.secret.subproblems.join(',');
+      this.secret.vueCoarse = this.secret.coarse.map(i => ({ value: i.join(',') }));
+      this.secret.vueGeneration = this.secret.generation.join(',');
+      this.secret.vueSubproblems = this.secret.subproblems.join(',');
       this.secret.id = data.id;
       this.secret.name = data.name || this.secret.id;
       this.coarseSize = this.secret.coarse.length;
-      this.get_plaintext();
+      this.getPlaintext();
     },
-    get_plaintext: async function () {
+    getPlaintext: async function () {
       const res = await axios.get('/ciphertext_to_plaintext', {
         params: {
           ciphertext: this.ciphertext.join(','),
@@ -112,23 +112,23 @@ export default {
         secret_id: this.secret.id,
         player: this.player,
         character_name: this.character,
-      }, this.axios_config)
+      }, this.axiosConfig)
         .then(() => { this.offerStyle = ''; })
         .catch(() => { this.offerStyle = 'background-color:red'; });
     },
   },
   watch: {
     ciphertext: function () {
-      this.get_plaintext();
+      this.getPlaintext();
     },
     coarseSize: function () {
-      helpers.arrayResize(this.secret.vue_coarse, this.coarseSize,
+      helpers.arrayResize(this.secret.vueCoarse, this.coarseSize,
         () => ({ value: Spell.props.plaintext.default().join(',') }));
     },
   },
   mounted: function () {
     this.retrieve();
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }
 </script>

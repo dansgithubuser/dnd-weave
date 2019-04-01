@@ -9,7 +9,7 @@ div
 </template>
 
 <script>
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 
 import axios from 'axios'
 
@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     create: async function () {
-      const res = await axios.post('/resource/Character/', {}, this.axios_config);
+      const res = await axios.post('/resource/Character/', {}, this.axiosConfig);
       this.load(res.data);
       this.retrieve();
     },
@@ -43,7 +43,7 @@ export default {
         {
           name: this.character.name,
         },
-        this.axios_config,
+        this.axiosConfig,
       ).then(() => this.retrieve());
     },
     load: function (data) {
@@ -54,7 +54,7 @@ export default {
   },
   mounted: function () {
     this.retrieve();
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }
 </script>

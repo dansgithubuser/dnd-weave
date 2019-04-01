@@ -23,7 +23,7 @@ div
     template(v-if='spell')
       Spell(:dict='spell.dict')
   CharacterSelector(
-    @character='character=$event; get_spells()'
+    @character='character=$event; getSpells()'
     ref='characterSelector'
   )
 </template>
@@ -32,7 +32,7 @@ div
 import PlaintextExplorer from './PlaintextExplorer.vue'
 import CharacterSelector from './CharacterSelector.vue'
 import Spell from './Spell.vue'
-import get_csrf_token from './get_csrf_token.js'
+import getCsrfToken from './get_csrf_token.js'
 
 import axios from 'axios'
 
@@ -52,27 +52,27 @@ export default {
     };
   },
   methods: {
-    accept: function (offer_id) {
+    accept: function (offerId) {
       axios.post('/accept', {
         character_id: this.character.id,
-        offer_id,
-      }, this.axios_config)
+        offerId,
+      }, this.axiosConfig)
         .then(() => this.$refs.characterSelector.retrieveOne(this.character.id));
     },
     research: function () {
       axios.post('/research', {
         character_id: this.character.id,
         runes: this.runes,
-      }, this.axios_config).then(() => this.get_spells());
+      }, this.axiosConfig).then(() => this.getSpells());
     },
-    get_spells: function () {
+    getSpells: function () {
       axios.get('/spells', {
         params: { character_id: this.character.id },
       }).then(r => this.spells = r.data);
     },
   },
   mounted: function () {
-    this.axios_config = { headers: { 'X-CSRFToken': get_csrf_token() } }
+    this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }
 </script>

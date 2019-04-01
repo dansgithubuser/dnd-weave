@@ -1,9 +1,9 @@
 <template lang='pug'>
 div
   h2 Ciphertext
-  input(type='number' min=1 v-model.number='ciphertext_size')
+  input(type='number' min=1 v-model.number='ciphertextSize')
   | number of runes
-  div(v-for='(v, i) in ciphertext_size')
+  div(v-for='(v, i) in ciphertextSize')
     input(type='number' min=0 max=255 value=0 v-model.number='ciphertext[i]')
     | {{ runes[i] }}
 </template>
@@ -13,20 +13,20 @@ import axios from 'axios'
 import helpers from './helpers.js'
 
 export default {
-  props: ['secret_id'],
+  props: ['secretId'],
   data: function () {
     return {
-      ciphertext_size: 1,
+      ciphertextSize: 1,
       ciphertext: [0],
       runes: [],
     };
   },
   methods: {
-    get_runes: async function () {
+    getRunes: async function () {
       const res = await axios.get('/ciphertext_to_runes', {
         params: {
           ciphertext: this.ciphertext.join(','),
-          secret_id: this.secret_id,
+          secret_id: this.secretId,
         },
       });
       this.runes = res.data;
@@ -35,18 +35,18 @@ export default {
   },
   watch: {
     ciphertext: function () {
-      this.get_runes();
+      this.getRunes();
       this.$emit('ciphertext', this.ciphertext);
     },
-    ciphertext_size: function () {
-      helpers.arrayResize(this.ciphertext, this.ciphertext_size, () => 0);
+    ciphertextSize: function () {
+      helpers.arrayResize(this.ciphertext, this.ciphertextSize, () => 0);
     },
-    secret_id: function () {
-      this.get_runes();
+    secretId: function () {
+      this.getRunes();
     }
   },
   mounted: function () {
-    this.get_runes();
+    this.getRunes();
   },
 }
 </script>
