@@ -8,7 +8,7 @@ div
         input(type='button' :value='i.runes' @click='inspectSpell(i)')
   template(v-if='character.secret_id')
     Runes(
-      :secret_id='character.secret_id'
+      :secretId='character.secret_id'
       @runes='runes=$event'
     )
   template(v-if='spell')
@@ -49,19 +49,19 @@ export default {
     };
   },
   methods: {
-    getSpells: function () {
+    getSpells () {
       axios.get('/spells', {
         params: { character_id: this.character.id },
       }).then(r => this.spells = r.data);
     },
-    inspectSpell: function (spell) {
+    inspectSpell (spell) {
       this.spell = spell;
       if (!this.spell.dict) {
         axios.get('/grant', { params: { spell_id: this.spell.id } })
           .then(r => this.spell.dict = r.data);
       }
     },
-    grant: function () {
+    grant () {
       axios.post('/grant', {
         spell_id: this.spell.id,
         character_id: this.character.id,
@@ -71,7 +71,7 @@ export default {
     },
   },
   watch: {
-    runes: async function () {
+    async runes () {
       axios.get('/runes_to_dict', {
         params: {
           runes: this.runes.join(' '),
@@ -80,7 +80,7 @@ export default {
       }).then(r => { this.spell = { dict: r.data } });
     },
   },
-  mounted: function () {
+  mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }

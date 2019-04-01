@@ -14,15 +14,13 @@ import helpers from './helpers.js'
 
 export default {
   props: ['secretId'],
-  data: function () {
-    return {
-      ciphertextSize: 1,
-      ciphertext: [0],
-      runes: [],
-    };
-  },
+  data: () => ({
+    ciphertextSize: 1,
+    ciphertext: [0],
+    runes: [],
+  }),
   methods: {
-    getRunes: async function () {
+    async getRunes () {
       const res = await axios.get('/ciphertext_to_runes', {
         params: {
           ciphertext: this.ciphertext.join(','),
@@ -34,18 +32,18 @@ export default {
     },
   },
   watch: {
-    ciphertext: function () {
+    ciphertext () {
       this.getRunes();
       this.$emit('ciphertext', this.ciphertext);
     },
-    ciphertextSize: function () {
+    ciphertextSize () {
       helpers.arrayResize(this.ciphertext, this.ciphertextSize, () => 0);
     },
-    secretId: function () {
+    secretId () {
       this.getRunes();
     }
   },
-  mounted: function () {
+  mounted () {
     this.getRunes();
   },
 }

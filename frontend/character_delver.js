@@ -6,5 +6,5 @@ Vue.config.productionTip = false
 
 new Vue({
   store,
-  render: function (h) { return h(CharacterDelver) }
+  render (h) { return h(CharacterDelver) },
 }).$mount('#character_delver')

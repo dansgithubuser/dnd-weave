@@ -43,35 +43,33 @@ export default {
     CharacterSelector,
     Spell,
   },
-  data: function () {
-    return {
-      character: CharacterSelector.data().character,
-      runes: '',
-      spells: [],
-      spell: null,
-    };
-  },
+  data: () => ({
+    character: CharacterSelector.data().character,
+    runes: '',
+    spells: [],
+    spell: null,
+  }),
   methods: {
-    accept: function (offerId) {
+    accept (offerId) {
       axios.post('/accept', {
         character_id: this.character.id,
         offerId,
       }, this.axiosConfig)
         .then(() => this.$refs.characterSelector.retrieveOne(this.character.id));
     },
-    research: function () {
+    research () {
       axios.post('/research', {
         character_id: this.character.id,
         runes: this.runes,
       }, this.axiosConfig).then(() => this.getSpells());
     },
-    getSpells: function () {
+    getSpells () {
       axios.get('/spells', {
         params: { character_id: this.character.id },
       }).then(r => this.spells = r.data);
     },
   },
-  mounted: function () {
+  mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }
 }

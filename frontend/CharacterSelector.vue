@@ -18,26 +18,24 @@ export default {
     retrieveUrl: { default: '/resource/Character' },
     allowNew: { default: true },
   },
-  data: function () {
-    return {
-      characters: [],
-      character: {},
-    };
-  },
+  data: () => ({
+    characters: [],
+    character: {},
+  }),
   methods: {
-    create: async function () {
+    async create () {
       const res = await axios.post('/resource/Character/', {}, this.axiosConfig);
       this.load(res.data);
       this.retrieve();
     },
-    retrieve: function () {
+    retrieve () {
       axios.get(this.retrieveUrl).then(r => { this.characters = r.data });
     },
-    retrieveOne: async function (id) {
+    async retrieveOne (id) {
       const res = await axios.get(`/resource/Character/${id}`);
       this.load(res.data);
     },
-    update: function () {
+    update () {
       axios.patch(
         `/resource/Character/${this.character.id}/`,
         {
@@ -46,13 +44,13 @@ export default {
         this.axiosConfig,
       ).then(() => this.retrieve());
     },
-    load: function (data) {
+    load (data) {
       this.character = data;
       this.character.name = this.character.name || this.character.id;
       this.$emit('character', this.character);
     },
   },
-  mounted: function () {
+  mounted () {
     this.retrieve();
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }

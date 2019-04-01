@@ -6,5 +6,5 @@ Vue.config.productionTip = false
 
 new Vue({
   store,
-  render: function (h) { return h(PlaintextExplorer) }
+  render (h) { return h(PlaintextExplorer) },
 }).$mount('#plaintext_explorer')

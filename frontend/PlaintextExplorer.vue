@@ -53,19 +53,17 @@ export default {
   components: {
     Spell,
   },
-  data: function () {
-    return {
-      plaintext: Spell.props.plaintext.default(),
-      extra: '',
-      misc: '',
-    };
-  },
+  data: () => ({
+    plaintext: Spell.props.plaintext.default(),
+    extra: '',
+    misc: '',
+  }),
   methods: {
     async random () {
       this.plaintext = Array.from({ length: 16 }, i => Math.floor(Math.random() * 256));
     },
   },
-  mounted: function () {
+  mounted () {
     axios.get('/plaintext_extras').then(r =>
       this.misc = r.data.map((v, i) =>
         `<li>${Math.floor(i * 4 / 3) + 1}: ${v[0]}</li>`

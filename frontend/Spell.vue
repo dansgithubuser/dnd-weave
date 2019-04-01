@@ -29,12 +29,10 @@ export default {
       default: false,
     },
   },
-  data: function () {
-    return {
-      ddict: {},
-      extra: '',
-    };
-  },
+  data: () => ({
+    ddict: {},
+    extra: '',
+  }),
   methods: {
     async submit () {
       const response = await axios.get('/plaintext_to_dict', {
@@ -58,7 +56,7 @@ export default {
         ).join(''))
       );
     },
-    getStyle: function (feature, value) {
+    getStyle (feature, value) {
       var style = '';
       if (feature  === 'element') {
         const colors = {
@@ -104,14 +102,14 @@ export default {
     },
   },
   watch: {
-    plaintext: async function () {
+    async plaintext () {
       this.submit();
     },
-    dict: function () {
+    dict () {
       if (!this.dict) return;
       this.load(this.dict);
     },
-    'ddict.level': function () {
+    'ddict.level' () {
       this.$emit('level', this.ddict.level);
     },
   },

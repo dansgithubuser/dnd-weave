@@ -47,33 +47,31 @@ export default {
     Runes,
     Spell,
   },
-  data: function () {
-    return {
-      secrets: [],
-      secret: {},
-      axiosConfig: {},
-      ciphertext: Runes.data().ciphertext,
-      player: '',
-      character: '',
-      offerStyle: '',
-      plaintext: Spell.props.plaintext.default(),
-      coarseSize: 1,
-    };
-  },
+  data: () => ({
+    secrets: [],
+    secret: {},
+    axiosConfig: {},
+    ciphertext: Runes.data().ciphertext,
+    player: '',
+    character: '',
+    offerStyle: '',
+    plaintext: Spell.props.plaintext.default(),
+    coarseSize: 1,
+  }),
   methods: {
-    create: async function () {
+    async create () {
       const res = await axios.post('/resource/Secret/', {}, this.axiosConfig);
       this.load(res.data);
       this.retrieve();
     },
-    retrieve: function () {
+    retrieve () {
       axios.get('/resource/Secret').then(r => { this.secrets = r.data });
     },
-    retrieveOne: async function (id) {
+    async retrieveOne (id) {
       const res = await axios.get(`/resource/Secret/${id}`);
       this.load(res.data);
     },
-    update: async function () {
+    async update () {
       this.secret.coarse = this.secret.vueCoarse.map(i => i.value.split(',').map(i => parseInt(i)));
       this.secret.generation = this.secret.vueGeneration.split(',').map(i => parseInt(i));
       this.secret.subproblems = this.secret.vueSubproblems.split(',').map(i => parseInt(i));
@@ -87,7 +85,7 @@ export default {
       );
       this.retrieve();
     },
-    load: function (data) {
+    load (data) {
       const json = JSON.parse(data.serialized);
       this.secret = json;
       this.secret.vueCoarse = this.secret.coarse.map(i => ({ value: i.join(',') }));
@@ -98,7 +96,7 @@ export default {
       this.coarseSize = this.secret.coarse.length;
       this.getPlaintext();
     },
-    getPlaintext: async function () {
+    async getPlaintext () {
       const res = await axios.get('/ciphertext_to_plaintext', {
         params: {
           ciphertext: this.ciphertext.join(','),
@@ -107,7 +105,7 @@ export default {
       });
       this.plaintext = res.data;
     },
-    offer: function () {
+    offer () {
       axios.post('/offer', {
         secret_id: this.secret.id,
         player: this.player,
@@ -118,15 +116,15 @@ export default {
     },
   },
   watch: {
-    ciphertext: function () {
+    ciphertext () {
       this.getPlaintext();
     },
-    coarseSize: function () {
+    coarseSize () {
       helpers.arrayResize(this.secret.vueCoarse, this.coarseSize,
         () => ({ value: Spell.props.plaintext.default().join(',') }));
     },
   },
-  mounted: function () {
+  mounted () {
     this.retrieve();
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
   }

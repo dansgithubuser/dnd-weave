@@ -6,5 +6,5 @@ Vue.config.productionTip = false
 
 new Vue({
   store,
-  render: function (h) { return h(Secretmaker) }
+  render (h) { return h(Secretmaker) },
 }).$mount('#secretmaker')
