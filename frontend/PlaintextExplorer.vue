@@ -2,8 +2,11 @@
 div
   h1 Plaintext explorer
   h2 Plaintext
-  div
-    | {{ plaintext.join(',') }}
+  input(
+    type='text'
+    size=65
+    v-model='plaintextString'
+  )
   div
     - const features = [
     -   'element',
@@ -58,6 +61,12 @@ export default {
     extra: '',
     misc: '',
   }),
+  computed: {
+    plaintextString: {
+      get () { return this.plaintext.join(',') },
+      set (value) { this.plaintext = value.split(',') },
+    },
+  },
   methods: {
     random () {
       this.plaintext = Array.from({ length: 16 }, i => Math.floor(Math.random() * 256));
