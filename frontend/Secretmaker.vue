@@ -64,8 +64,8 @@ export default {
       this.load(res.data);
       this.retrieve();
     },
-    retrieve () {
-      axios.get('/resource/Secret').then(r => { this.secrets = r.data });
+    async retrieve () {
+      this.secrets = (await axios.get('/resource/Secret')).data;
     },
     async retrieveOne (id) {
       const res = await axios.get(`/resource/Secret/${id}`);
@@ -111,8 +111,8 @@ export default {
         player: this.player,
         character_name: this.character,
       }, this.axiosConfig)
-        .then(() => { this.offerStyle = ''; })
-        .catch(() => { this.offerStyle = 'background-color:red'; });
+        .then(() => this.offerStyle = '')
+        .catch(() => this.offerStyle = 'background-color:red');
     },
   },
   watch: {
@@ -127,6 +127,6 @@ export default {
   mounted () {
     this.retrieve();
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
-  }
+  },
 }
 </script>

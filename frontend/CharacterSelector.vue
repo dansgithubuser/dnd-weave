@@ -28,21 +28,20 @@ export default {
       this.load(res.data);
       this.retrieve();
     },
-    retrieve () {
-      axios.get(this.retrieveUrl).then(r => { this.characters = r.data });
+    async retrieve () {
+      this.characters = (await axios.get(this.retrieveUrl)).data;
     },
     async retrieveOne (id) {
       const res = await axios.get(`/resource/Character/${id}`);
       this.load(res.data);
     },
-    update () {
-      axios.patch(
+    async update () {
+      await axios.patch(
         `/resource/Character/${this.character.id}/`,
-        {
-          name: this.character.name,
-        },
+        { name: this.character.name },
         this.axiosConfig,
-      ).then(() => this.retrieve());
+      );
+      this.retrieve();
     },
     load (data) {
       this.character = data;
@@ -53,6 +52,6 @@ export default {
   mounted () {
     this.retrieve();
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
-  }
+  },
 }
 </script>

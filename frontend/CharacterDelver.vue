@@ -50,27 +50,28 @@ export default {
     spell: null,
   }),
   methods: {
-    accept (offerId) {
-      axios.post('/accept', {
+    async accept (offerId) {
+      await axios.post('/accept', {
         character_id: this.character.id,
         offerId,
-      }, this.axiosConfig)
-        .then(() => this.$refs.characterSelector.retrieveOne(this.character.id));
+      }, this.axiosConfig);
+      this.$refs.characterSelector.retrieveOne(this.character.id);
     },
-    research () {
-      axios.post('/research', {
+    async research () {
+      await axios.post('/research', {
         character_id: this.character.id,
         runes: this.runes,
-      }, this.axiosConfig).then(() => this.getSpells());
+      }, this.axiosConfig);
+      this.getSpells();
     },
-    getSpells () {
-      axios.get('/spells', {
+    async getSpells () {
+      this.spells = (await axios.get('/spells', {
         params: { character_id: this.character.id },
-      }).then(r => this.spells = r.data);
+      })).data;
     },
   },
   mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
-  }
+  },
 }
 </script>

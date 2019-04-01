@@ -49,39 +49,40 @@ export default {
     };
   },
   methods: {
-    getSpells () {
-      axios.get('/spells', {
+    async getSpells () {
+      this.spells = (await axios.get('/spells', {
         params: { character_id: this.character.id },
-      }).then(r => this.spells = r.data);
+      })).data;
     },
-    inspectSpell (spell) {
+    async inspectSpell (spell) {
       this.spell = spell;
-      if (!this.spell.dict) {
-        axios.get('/grant', { params: { spell_id: this.spell.id } })
-          .then(r => this.spell.dict = r.data);
-      }
+      if (!this.spell.dict)
+        this.spell.dict = (await axios.get('/grant', { params: {
+          spell_id: this.spell.id,
+        } })).data;
     },
-    grant () {
-      axios.post('/grant', {
+    async grant () {
+      await axios.post('/grant', {
         spell_id: this.spell.id,
         character_id: this.character.id,
         runes: this.runes.join(' '),
         level: this.spell.dict.level,
-      }, this.axiosConfig).then(() => this.getSpells());
+      }, this.axiosConfig);
+      this.getSpells();
     },
   },
   watch: {
     async runes () {
-      axios.get('/runes_to_dict', {
+      this.spell = { dict: (await axios.get('/runes_to_dict', {
         params: {
           runes: this.runes.join(' '),
           secret_id: this.character.secret_id,
         },
-      }).then(r => { this.spell = { dict: r.data } });
+      })).data };
     },
   },
   mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
-  }
+  },
 }
 </script>

@@ -59,16 +59,14 @@ export default {
     misc: '',
   }),
   methods: {
-    async random () {
+    random () {
       this.plaintext = Array.from({ length: 16 }, i => Math.floor(Math.random() * 256));
     },
   },
-  mounted () {
-    axios.get('/plaintext_extras').then(r =>
-      this.misc = r.data.map((v, i) =>
-        `<li>${Math.floor(i * 4 / 3) + 1}: ${v[0]}</li>`
-      ).join('')
-    );
+  async mounted () {
+    this.misc = (await axios.get('/plaintext_extras')).data.map(
+      (v, i) => `<li>${Math.floor(i * 4 / 3) + 1}: ${v[0]}</li>`,
+    ).join('');
   },
 }
 </script>

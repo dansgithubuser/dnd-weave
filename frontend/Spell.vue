@@ -50,11 +50,10 @@ export default {
         }
       }
       this.ddict = dict;
-      axios.get(`/plaintext_extras?element=${data['element']}`).then(r =>
-        this.$emit('extra', this.extra = r.data.map((v, i) =>
-          `<li>${i * 4}: ${v[0]}</li>`
-        ).join(''))
-      );
+      this.extra = (await axios.get(`/plaintext_extras?element=${data['element']}`)).data.map(
+        (v, i) => `<li>${i * 4}: ${v[0]}</li>`,
+      ).join('');
+      this.$emit('extra', this.extra);
     },
     getStyle (feature, value) {
       var style = '';
@@ -102,7 +101,7 @@ export default {
     },
   },
   watch: {
-    async plaintext () {
+    plaintext () {
       this.submit();
     },
     dict () {
