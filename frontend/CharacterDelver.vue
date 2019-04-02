@@ -53,7 +53,7 @@ export default {
     async accept (offerId) {
       await axios.post('/accept', {
         character_id: this.character.id,
-        offerId,
+        offer_id: offerId,
       }, this.axiosConfig);
       this.$refs.characterSelector.retrieveOne(this.character.id);
     },
