@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   h2 Ciphertext
-  input(type='number' min=1 v-model.number='ciphertextSize')
+  input(type='number' min=1 max=9 v-model.number='ciphertextSize')
   | number of runes
   div(v-for='(v, i) in ciphertextSize')
     input(type='number' min=0 max=255 value=0 v-model.number='ciphertext[i]')

@@ -26,18 +26,15 @@ div
     -   'extra 2',
     -   'extra 3',
     - ];
-    .row
-      each c in [0, 1]
-        .column
-          each v, i in features.slice(8 * c, 8 * (c + 1))
-            div
-              input(
-                type='number'
-                min=0
-                max=256
-                v-model.number=`plaintext[${i}]`
-              )
-              = v
+    each v, i in features
+      div
+        input(
+          type='number'
+          min=0
+          max=256
+          v-model.number=`plaintext[${i}]`
+        )
+        = v
   input(type='button' value='Random' @click='random')
   Spell(
     :plaintext='plaintext'
