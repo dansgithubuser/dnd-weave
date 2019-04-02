@@ -32,6 +32,23 @@
     .column {
       flex: 50%;
     }
+    .tooltip {
+      margin-left: 0.5em;
+      color: #888;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 30vw;
+      background-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 5px 5px;
+      position: absolute;
+      z-index: 1;
+      margin-left: 10px;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
   </style>
   <body>
     <div>

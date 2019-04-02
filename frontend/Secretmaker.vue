@@ -5,13 +5,29 @@ div
     h3 Name
     input(type='text' v-model='secret.name')
     h3 Coarse
+      span.tooltip ?
+        .tooltiptext The first rune of a spell selects a slot. 
+          | A slot corresponds to a plaintext, which can be figured with the plaintext explorer. 
+          | This is where you can theme what spells a character can typically perform.
     input(type='number' min=1 v-model.number='coarseSize')
     | slots
     div(v-for='i in secret.vueCoarse')
       input(type='text' v-model='i.value' size=65)
     h3 Generation
+      span.tooltip ?
+        .tooltiptext Slots are organized into generations. 
+          | The slots explicitly specified are the first generation. 
+          | Latter generations have this value added to them.
     input(type='text' v-model='secret.vueGeneration' size=65)
     h3 Subproblems
+      span.tooltip ?
+        .tooltiptext Latter runes obey complicated behavior, 
+          | modifying the slot specified by the first. 
+          | This is where you can theme how a character problem solves with the weave. 
+          | Subproblem themes and modification types are:
+          | <br>0 - linear, precise
+          | <br>1 - spherical, chaotic
+          | <br>2 - fractal, medium
     input(type='text' v-model='secret.vueSubproblems')
     h3 Manage
     div
