@@ -27,6 +27,21 @@ def plaintext_extras(request):
     element = request.GET.get('element')
     return JsonResponse(weave.extras[element] if element else weave.misc, safe=False)
 
+def home(request):
+    '''{'route': ''}'''
+    if request.user.is_authenticated:
+        secrets = SecretViewSet.list_internal(request)
+        spellgrantees = CharacterViewSet.spellgrantees_internal(request)
+        characters = CharacterViewSet.list_internal(request)
+        for i in [secrets, spellgrantees, characters]:
+            for j in i:
+                if not j['name']: j['name'] = j['id']
+    return render(request, 'home.html', {
+        'secrets': secrets,
+        'spellgrantees': spellgrantees,
+        'characters': characters,
+    })
+
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
@@ -82,10 +97,14 @@ class SecretViewSet(viewsets.ModelViewSet):
         secret = weave.Secret().deserialize(self.request.data['serialized'])
         serializer.save(serialized=secret.serialize())
 
-    def list(self, request):
+    @classmethod
+    def list_internal(cls, request):
         secrets = models.Secret.objects.filter(keeper_id=request.user.id).order_by('id')
-        serializer = self.get_serializer(secrets, many=True)
-        return Response(serializer.data)
+        serializer = cls.serializer_class(secrets, many=True)
+        return serializer.data
+
+    def list(self, request):
+        return Response(self.list_internal(request))
 
 def offer(request):
     post = json.loads(request.body)
@@ -120,10 +139,14 @@ class CharacterViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(player=self.request.user)
 
-    def list(self, request):
+    @classmethod
+    def list_internal(cls, request):
         characters = models.Character.objects.filter(player_id=request.user.id).order_by('id')
-        serializer = self.get_serializer(characters, many=True)
-        return Response(serializer.data)
+        serializer = cls.serializer_class(characters, many=True)
+        return serializer.data
+
+    def list(self, request):
+        return Response(self.list_internal(request))
 
     def retrieve(self, request, pk):
         character = models.Character.objects.get(id=pk)
@@ -138,11 +161,15 @@ class CharacterViewSet(viewsets.ModelViewSet):
         } for i in offers]
         return Response(data)
 
-    @action(detail=False)
-    def secret_kept(self, request):
+    @classmethod
+    def spellgrantees_internal(cls, request):
         characters = models.Character.objects.filter(secret__keeper=request.user)
-        serializer = self.get_serializer(characters, many=True)
-        return Response(serializer.data)
+        serializer = cls.serializer_class(characters, many=True)
+        return serializer.data
+
+    @action(detail=False)
+    def spellgrantees(self, request):
+        return Response(self.spellgrantees_internal(request))
 
 def research(request):
     post = json.loads(request.body)

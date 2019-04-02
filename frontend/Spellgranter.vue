@@ -22,9 +22,10 @@ div
     )
     input(type='button' value='grant' @click='grant')
   CharacterSelector(
-    :retrieveUrl='"resource/Character/secret_kept"'
+    :retrieveUrl='"/resource/Character/spellgrantees"'
     :allowNew='false'
     @character='character=$event; getSpells()'
+    ref='characterSelector'
   )
 </template>
 
@@ -86,6 +87,8 @@ export default {
   },
   mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
+    if (initialCharacterId !== null)
+      this.$refs.characterSelector.retrieveOne(initialCharacterId);
   },
 }
 </script>

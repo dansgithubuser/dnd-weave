@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <a href='signup'>Signup</a><br>
-  <a href='login'>Login</a><br>
+  <h1>Weave</h1>
+  {% if user.is_authenticated %}
+    Lo, {{ user.get_username }}!
+  {% endif %}
+  {% if secrets %}
+    <h2>Secrets</h2>
+    {% for i in secrets %}
+      <a href='/secretmaker/{{ i.id }}'>{{ i.name }}</a>
+    {% endfor %}
+  {% endif %}
+  {% if spellgrantees %}
+    <h2>Spellgrantees</h2>
+    {% for i in spellgrantees %}
+      <a href='/spellgranter/{{ i.id }}'>{{ i.name }}</a>
+    {% endfor %}
+  {% endif %}
+  {% if characters %}
+    <h2>Characters</h2>
+    {% for i in characters %}
+      <a href='/character_delver/{{ i.id }}'>{{ i.name }}</a>
+    {% endfor %}
+  {% endif %}
+  <h2>Authentication</h2>
+  <a href='/signup'>Signup</a><br>
+  <a href='/login'>Login</a><br>
 {% endblock %}

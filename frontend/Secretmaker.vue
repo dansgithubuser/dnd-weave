@@ -140,9 +140,10 @@ export default {
         () => ({ value: Spell.props.plaintext.default().join(',') }));
     },
   },
-  mounted () {
-    this.retrieve();
+  async mounted () {
     this.axiosConfig = { headers: { 'X-CSRFToken': getCsrfToken() } }
+    await this.retrieve();
+    if (initialSecretId !== null) this.retrieveOne(initialSecretId);
   },
 }
 </script>

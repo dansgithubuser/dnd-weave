@@ -2,20 +2,28 @@ from . import views
 
 from rest_framework import routers, viewsets
 
-from django.urls import path, include, resolvers
+from django.urls import path, include, resolvers, re_path
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
 import inspect
 import os
 
+def pattern(name, template_name=None, param=None, param_re=r'\d'):
+    if not template_name: template_name = '{}.html'.format(name)
+    route = '^'
+    if name: route += '{}/'.format(name)
+    if param: route += '(?:(?P<{}>{}+)/)?'.format(param, param_re)
+    route += '$'
+    view = TemplateView.as_view(template_name=template_name)
+    return re_path(route, view)
+
 urlpatterns = [
-    path('plaintext_explorer', TemplateView.as_view(template_name='plaintext_explorer.html')),
-    path('login', auth_views.LoginView.as_view(template_name='login.html')),
-    path('', TemplateView.as_view(template_name='home.html')),
-    path('secretmaker', TemplateView.as_view(template_name='secretmaker.html')),
-    path('spellgranter', TemplateView.as_view(template_name='spellgranter.html')),
-    path('character_delver', TemplateView.as_view(template_name='character_delver.html')),
+    pattern('plaintext_explorer'),
+    pattern('login'),
+    pattern('secretmaker', param='secret_id'),
+    pattern('spellgranter', param='character_id'),
+    pattern('character_delver', param='character_id'),
     path('resource/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
