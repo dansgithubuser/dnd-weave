@@ -6,9 +6,9 @@ div
     input(type='text' v-model='secret.name')
     h3 Coarse
     input(type='number' min=1 v-model.number='coarseSize')
-    ol
-      li(v-for='i in secret.vueCoarse')
-        input(type='text' v-model='i.value' size=65)
+    | slots
+    div(v-for='i in secret.vueCoarse')
+      input(type='text' v-model='i.value' size=65)
     h3 Generation
     input(type='text' v-model='secret.vueGeneration' size=65)
     h3 Subproblems

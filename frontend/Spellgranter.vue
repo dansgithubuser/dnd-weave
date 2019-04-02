@@ -1,6 +1,9 @@
 <template lang='pug'>
 div
   h1 Spellgranter
+  template(v-if='character.name')
+    h3 Character
+    | {{ character.name }}
   template(v-if='spells.length')
     h2 Spells
     ul
