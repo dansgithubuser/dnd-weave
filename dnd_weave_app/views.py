@@ -29,18 +29,15 @@ def plaintext_extras(request):
 
 def home(request):
     '''{'route': ''}'''
+    context = {'secrets': [], 'spellgrantees': [], 'characters': []}
     if request.user.is_authenticated:
-        secrets = SecretViewSet.list_internal(request)
-        spellgrantees = CharacterViewSet.spellgrantees_internal(request)
-        characters = CharacterViewSet.list_internal(request)
-        for i in [secrets, spellgrantees, characters]:
-            for j in i:
-                if not j['name']: j['name'] = j['id']
-    return render(request, 'home.html', {
-        'secrets': secrets,
-        'spellgrantees': spellgrantees,
-        'characters': characters,
-    })
+        context['secrets'] = SecretViewSet.list_internal(request)
+        context['spellgrantees'] = CharacterViewSet.spellgrantees_internal(request)
+        context['characters'] = CharacterViewSet.list_internal(request)
+        for k, v in context.items():
+            for i in v:
+                if not i['name']: i['name'] = i['id']
+    return render(request, 'home.html', context)
 
 @csrf_exempt
 def signup(request):
