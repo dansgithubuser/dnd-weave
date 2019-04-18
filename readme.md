@@ -6,3 +6,4 @@ See https://github.com/dansgithubuser/dnd/blob/master/dnd/weave.py for thought p
 ## todo
 - make enter work!
 - reload spells on spellgranter and character delver pages
+- in spellgranter, indicate which spells are already granted
