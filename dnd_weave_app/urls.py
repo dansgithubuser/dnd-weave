@@ -20,7 +20,7 @@ def pattern(name, template_name=None, param=None, param_re=r'\d'):
 
 urlpatterns = [
     pattern('plaintext_explorer'),
-    pattern('login'),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html')),
     pattern('secretmaker', param='secret_id'),
     pattern('spellgranter', param='character_id'),
     pattern('character_delver', param='character_id'),
