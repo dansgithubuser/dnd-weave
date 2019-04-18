@@ -182,7 +182,7 @@ def research(request):
 def spells(request):
     character = models.Character.objects.get(id=request.GET['character_id'])
     if character.player != request.user:
-        secret = models.Secret.get(id=character.secret_id)
+        secret = models.Secret.objects.get(id=character.secret_id)
         if secret.keeper != request.user:
             raise Exception("character doesn't belong to and isn't secret-kept by user")
     spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('id', 'runes', 'dict').order_by('id')
