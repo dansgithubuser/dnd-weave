@@ -7,3 +7,6 @@ See https://github.com/dansgithubuser/dnd/blob/master/dnd/weave.py for thought p
 - make enter work!
 - reload spells on spellgranter and character delver pages
 - in spellgranter, indicate which spells are already granted
+- in spellgranter, indicate which spells are invalid
+- make stuff case-insensitive
+- make spells list scrollable and horizontal
