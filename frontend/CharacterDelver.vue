@@ -61,7 +61,7 @@ export default {
     async research () {
       await axios.post('/research', {
         character_id: this.character.id,
-        runes: this.runes,
+        runes: this.runes.toLowerCase(),
       }, this.axiosConfig);
       this.runes = '';
       this.getSpells();
