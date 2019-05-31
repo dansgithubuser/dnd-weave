@@ -13,13 +13,13 @@ div
     input(type='button' value='Save' @click='$refs.characterSelector.update')
     template(v-if='character.secret_id')
       h2 Runes
-      input(type='text' v-model='runes')
+      input(type='text' v-model='runes' v-on:keyup.enter='research')
       input(type='button' value='Research' @click='research')
     template(v-if='spells.length')
       h2 Spells
-      ul
-        li(v-for='i in spells')
-          input(type='button' :value='i.runes' :disabled='i.dict ? false : true' @click='spell = i')
+      div(style='overflow-y:scroll; height:300px; resize:vertical')
+        input(v-for='i in spells' type='button' :value='i.runes' :disabled='i.dict.level === undefined' @click='spell = i')
+      input(type='button' value='Refresh' @click='getSpells()')
     template(v-if='spell')
       Spell(:dict='spell.dict')
   CharacterSelector(
@@ -60,8 +60,9 @@ export default {
     async research () {
       await axios.post('/research', {
         character_id: this.character.id,
-        runes: this.runes,
+        runes: this.runes.toLowerCase(),
       }, this.axiosConfig);
+      this.runes = '';
       this.getSpells();
     },
     async getSpells () {

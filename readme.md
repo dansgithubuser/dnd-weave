@@ -4,9 +4,4 @@ A D&D tool to create explorable magic, with cryptographic inspiration.
 See https://github.com/dansgithubuser/dnd/blob/master/dnd/weave.py for thought process leading to this.
 
 ## todo
-- make enter work!
-- reload spells on spellgranter and character delver pages
-- in spellgranter, indicate which spells are already granted
-- in spellgranter, indicate which spells are invalid
-- make stuff case-insensitive
-- make spells list scrollable and horizontal
+- disallow usernames that differ by case https://code.djangoproject.com/ticket/25617
