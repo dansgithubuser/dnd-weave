@@ -6,14 +6,14 @@ div
     | {{ character.name }}
   template(v-if='spells.length')
     h2 Spells
-    ul
-      li(v-for='i in spells')
-        input(
-          type='button'
-          :value='i.runes'
-          @click='spell = i'
-          :style='i.buttonStyle'
-        )
+    div(style='overflow-y:scroll; height:300px; resize:vertical')
+      input(
+        v-for='i in spells'
+        type='button'
+        :value='i.runes'
+        @click='spell = i'
+        :style='i.buttonStyle'
+      )
     input(type='button' value='Refresh' @click='getSpells()')
   template(v-if='character.secret_id')
     Runes(
