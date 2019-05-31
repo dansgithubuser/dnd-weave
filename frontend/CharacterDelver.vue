@@ -20,6 +20,7 @@ div
       ul
         li(v-for='i in spells')
           input(type='button' :value='i.runes' :disabled='i.dict ? false : true' @click='spell = i')
+      input(type='button' value='Refresh' @click='getSpells()')
     template(v-if='spell')
       Spell(:dict='spell.dict')
   CharacterSelector(

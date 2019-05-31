@@ -9,6 +9,7 @@ div
     ul
       li(v-for='i in spells')
         input(type='button' :value='i.runes' @click='inspectSpell(i)')
+    input(type='button' value='Refresh' @click='getSpells()')
   template(v-if='character.secret_id')
     Runes(
       :secretId='character.secret_id'
