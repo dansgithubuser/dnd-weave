@@ -8,24 +8,29 @@ div
     h2 Spells
     ul
       li(v-for='i in spells')
-        input(type='button' :value='i.runes' @click='inspectSpell(i)')
+        input(
+          type='button'
+          :value='i.runes'
+          @click='spell = i'
+          :style='i.buttonStyle'
+        )
     input(type='button' value='Refresh' @click='getSpells()')
   template(v-if='character.secret_id')
     Runes(
       :secretId='character.secret_id'
-      @runes='runes=$event'
+      @runes='runes = $event'
     )
   template(v-if='spell')
     Spell(
       :dict='spell.dict'
       :editableLevel='true'
-      @level='spell.dict.level=$event'
+      @level='spell.dict.level = $event'
     )
     input(type='button' value='grant' @click='grant')
   CharacterSelector(
     :retrieveUrl='"/resource/Character/spellgrantees"'
     :allowNew='false'
-    @character='character=$event; getSpells()'
+    @character='character = $event; getSpells()'
     ref='characterSelector'
   )
 </template>
@@ -56,15 +61,16 @@ export default {
   methods: {
     async getSpells () {
       this.spells = (await axios.get('/spells', {
-        params: { character_id: this.character.id },
-      })).data;
-    },
-    async inspectSpell (spell) {
-      this.spell = spell;
-      if (!this.spell.dict)
-        this.spell.dict = (await axios.get('/grant', { params: {
-          spell_id: this.spell.id,
-        } })).data;
+        params: {
+          character_id: this.character.id,
+          viewer: 'keeper',
+        },
+      })).data.map(i => {
+        var color = 'black';
+        if (i.dict.error) color = 'red';
+        i.buttonStyle = `color:${color}`;
+        return i;
+      });
     },
     async grant () {
       await axios.post('/grant', {

@@ -180,23 +180,32 @@ def research(request):
     return HttpResponse(status=201)
 
 def spells(request):
-    character = models.Character.objects.get(id=request.GET['character_id'])
-    if character.player != request.user:
-        secret = models.Secret.objects.get(id=character.secret_id)
-        if secret.keeper != request.user:
-            raise Exception("character doesn't belong to and isn't secret-kept by user")
-    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).values('id', 'runes', 'dict').order_by('id')
-    return JsonResponse([
-        {'id': i['id'], 'runes': i['runes'], 'dict': json.loads(i['dict']) if i['dict'] else ''}
-        for i in spells
-    ], safe=False)
+    character = models.Character.objects.select_related().get(id=request.GET['character_id'])
+    viewer = request.GET.get('viewer', 'character')
+    if viewer == 'keeper':
+        if character.secret.keeper != request.user:
+            raise Exception("character isn't secret-kept by user")
+    else:
+        if character.player != request.user:
+            raise Exception("character doesn't belong to user")
+    spells = models.Spell.objects.filter(character_id=request.GET['character_id']).order_by('id')
+    result = []
+    for i in spells:
+        if i.dict:
+            d = json.loads(i.dict)
+        elif viewer == 'keeper':
+            d = helpers.decrypt(i, character)
+        else:
+            d = ''
+        result.append({
+            'id': i.id,
+            'runes': i.runes,
+            'dict': d,
+        })
+    return JsonResponse(result, safe=False)
 
 def grant(request):
-    #homogenize data
-    if request.method == 'POST':
-        data = json.loads(request.body)
-    else:
-        data = request.GET
+    data = json.loads(request.body)
     #get or create spell
     spell_id = data.get('spell_id')
     if spell_id:
@@ -207,24 +216,18 @@ def grant(request):
             runes=data['runes'],
         )
     #check permission
-    character = models.Character.objects.filter(id=spell.character_id).values('secret__serialized', 'secret__keeper_id')[0]
-    if request.user.id != character['secret__keeper_id']:
+    character = models.Character.objects.select_related().get(id=spell.character_id)
+    if request.user != character.secret.keeper:
         raise Exception("user isn't secret keeper for this spell")
     #decrypt
-    secret = weave.Secret().deserialize(character['secret__serialized'])
-    try:
-        ciphertext = weave.runes_to_ciphertext(spell.runes.split(), secret)
-    except:
-        return JsonResponse({'not a spell': 'invalid runes'})
-    plaintext = weave.ciphertext_to_plaintext(ciphertext, secret)
-    d = helpers.plaintext_to_jsonable(plaintext)
+    d = helpers.decrypt(spell, character)
     #custom level
     level = data.get('level')
     if level is not None: d['level'] = int(level)
     #results
     spell.dict = json.dumps(d)
-    if request.method == 'POST': spell.save()
-    return JsonResponse(d)
+    spell.save()
+    return HttpResponse(status=204)
 
 def runes_to_dict(request):
     secret = models.Secret.objects.get(id=request.GET['secret_id'])
