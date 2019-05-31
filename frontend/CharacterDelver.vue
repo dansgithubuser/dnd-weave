@@ -13,7 +13,7 @@ div
     input(type='button' value='Save' @click='$refs.characterSelector.update')
     template(v-if='character.secret_id')
       h2 Runes
-      input(type='text' v-model='runes')
+      input(type='text' v-model='runes' v-on:keyup.enter='research')
       input(type='button' value='Research' @click='research')
     template(v-if='spells.length')
       h2 Spells
@@ -62,6 +62,7 @@ export default {
         character_id: this.character.id,
         runes: this.runes,
       }, this.axiosConfig);
+      this.runes = '';
       this.getSpells();
     },
     async getSpells () {
