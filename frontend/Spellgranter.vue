@@ -68,6 +68,7 @@ export default {
       })).data.map(i => {
         var color = 'black';
         if (i.dict.error) color = 'red';
+        else if (!i.granted) color = 'blue';
         i.buttonStyle = `color:${color}`;
         return i;
       });

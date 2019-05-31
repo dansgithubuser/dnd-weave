@@ -191,17 +191,19 @@ def spells(request):
     spells = models.Spell.objects.filter(character_id=request.GET['character_id']).order_by('id')
     result = []
     for i in spells:
-        if i.dict:
-            d = json.loads(i.dict)
-        elif viewer == 'keeper':
-            d = helpers.decrypt(i, character)
-        else:
-            d = ''
-        result.append({
+        r = {
             'id': i.id,
             'runes': i.runes,
-            'dict': d,
-        })
+        }
+        if i.dict:
+            r['dict'] = json.loads(i.dict)
+            if viewer == 'keeper':
+                r['granted'] = True
+        elif viewer == 'keeper':
+            r['dict'] = helpers.decrypt(i, character)
+        else:
+            r['dict'] = {}
+        result.append(r)
     return JsonResponse(result, safe=False)
 
 def grant(request):
