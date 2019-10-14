@@ -20,6 +20,8 @@ sys.path.append(os.path.join(BASE_DIR, 'deps', 'dnd', 'dnd'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7_qp=j32flnuhnor@+$eioitg^)#@t02c)lr#!r_#d8*#za!i&'
+if os.environ.get('DJANGOGO_ENV') != 'local':
+    SECRET_KEY = os.environ['DND_WEAVE_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
